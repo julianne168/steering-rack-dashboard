@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>转向器驾驶舱 · 监控视图</title>
+  <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="module.css">
+  <style>
+    :root{--blue:#3b82f6;--green:#42b983;--ink:#263548;--muted:#8b98aa;--line:#e7ebf2;--bg:#f5f7fb;--panel:#fff;--red:#ef746f;--amber:#f1ab52}
+    body{background:var(--bg)} .global-header,.left-nav{background:rgba(255,255,255,.96)}
+    .module-panel{border-color:var(--line);box-shadow:0 1px 2px rgba(29,42,62,.025)}
+    .module-banner{background:linear-gradient(120deg,#edf7ff,#f5fbf8);border-color:#d6eadf}
+    .flow-link:hover,.flow-link.current{border-color:#bed8ff;background:#edf4ff;color:#3b82f6}
+    .flow-link.review{border-color:#ccebd9;background:#effaf4;color:#2e9966}
+    .conclusion-chip.risk{background:#fff2f0;border-color:#f7d8d4}.conclusion-chip.safe{background:#edfaf3;border-color:#d2eedc}.conclusion-chip.watch{background:#fff7ea;border-color:#f5e1bd}
+    /* dashboard.css 的侧栏与顶栏使用 fixed 定位；模块页须显式预留该空间。 */
+    .module-main { margin:84px 0 0 300px; max-width:none; min-height:calc(100vh - 84px); padding:28px 30px 52px; }
+    .module-banner { grid-template-columns:1fr auto; }
+    .left-nav .nav-link[href^="module.html"] > span { display:none; }
+    @media (max-width:1400px) { .module-main { margin-left:230px; padding:24px 20px 52px; } }
+    @media (max-width:700px) { .module-main { margin:64px 0 0; padding:18px 14px 40px; } }
+  </style>
+</head>
+<body>
+  <header class="global-header"><div class="workbench-name"><span class="blue-dot"></span><strong>转向器驾驶舱</strong><span>陈喆妍 · 周度监控</span></div><div class="shortcut-bar"><a href="dashboard.html">← 返回主页看板</a></div></header>
+  <aside class="left-nav" aria-label="工作台导航">
+    <div class="brand"><span class="brand-mark">SR</span><span>转向器驾驶舱</span></div>
+    <p class="workspace-label">小白马 · 美国站 VC1</p>
+    <nav class="nav"><a class="nav-link" href="dashboard.html"><span>⌂</span>主页看板</a><a class="nav-link" href="dashboard.html#queue"><span>☑</span>统一行动队列 <b>1,447</b></a><p class="nav-caption space">分析模块</p><a class="nav-link" href="module.html?module=a"><span>A</span>周环比监控</a><a class="nav-link" href="module.html?module=b"><span>B</span>掉量归因</a><a class="nav-link" href="module.html?module=c"><span>C</span>活动重构</a><a class="nav-link" href="module.html?module=d"><span>D/E</span>流量治理</a><a class="nav-link" href="module.html?module=f"><span>F</span>潜力词</a><a class="nav-link" href="module.html?module=g"><span>G</span>利润护栏</a></nav>
+    <div class="nav-bottom">数据已加载 · W35 vs W34</div>
+  </aside>
+  <main class="main module-main">
+    <a class="back-link" href="dashboard.html">← 返回经营总览</a>
+    <section id="module-workspace" class="module-workspace" aria-live="polite"></section>
+  </main>
+  <script src="data.js"></script>
+  <script src="module.js"></script>
+</body>
+</html>

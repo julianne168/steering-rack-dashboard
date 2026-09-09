@@ -1,0 +1,7 @@
+const titleMap={overview:'转向器广告复盘工作台',alerts:'预警中心',actions:'统一行动队列','module-a':'模块 A · ASIN 周环比监控','module-b':'模块 B · 掉量原因归因','module-c':'模块 C · 活动诊断与重构','module-d':'模块 D/E · 无效流量与否词校验','module-f':'模块 F · 潜力词','module-g':'模块 G · 盈亏平衡 ACOS'};
+const toast=document.querySelector('.toast');
+function notify(message){toast.textContent=message;toast.classList.add('show');window.setTimeout(()=>toast.classList.remove('show'),2200)}
+function go(view){if(view.startsWith('module-')){window.location.href=`module.html?module=${view.slice(-1)}`;return}document.querySelectorAll('.nav-item').forEach(item=>item.classList.toggle('active',item.dataset.view===view));document.querySelector('#page-title').textContent=titleMap[view]||titleMap.overview;const targets={overview:'#overview',alerts:'#alerts',actions:'#actions'};document.querySelector(targets[view]||'#overview').scrollIntoView({behavior:'smooth',block:'start'})}
+document.querySelectorAll('[data-view]').forEach(button=>button.addEventListener('click',()=>go(button.dataset.view)));
+document.querySelector('#queue-button').addEventListener('click',()=>go('actions'));
+document.querySelectorAll('.filter').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('.filter').forEach(x=>x.classList.remove('active'));button.classList.add('active');const value=button.dataset.filter;document.querySelectorAll('#action-rows tr').forEach(row=>row.hidden=value!=='all'&&row.dataset.priority!==value);notify(value==='all'?'已显示全部行动':'已筛选 '+value+' 行动');}));

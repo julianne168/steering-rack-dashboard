@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="转向器广告复盘运营工作台">
+  <title>转向器驾驶舱</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main style="max-width:760px;margin:12vh auto;padding:32px;font:16px/1.6 Inter,'Microsoft YaHei',sans-serif;color:#152421">
+    <p style="color:#167d52;font-size:13px;font-weight:700;letter-spacing:.08em">转向器驾驶舱</p>
+    <h1 style="margin:0">已使用新版三栏主页看板</h1>
+    <p>主页看板统一承载经营总览和行动队列；A / B / G / C / D-E / F 的独立分析工作区从主页模块入口进入。</p>
+    <p><a href="dashboard.html" style="display:inline-block;background:#1ba66a;color:#fff;padding:10px 16px;border-radius:8px;text-decoration:none;font-weight:700">进入主页看板 →</a></p>
+  </main>
+  <!-- 旧版单页工作台保留在源码中仅供回溯，不再作为可访问页面。
+  <aside class="sidebar" aria-label="工作台导航">
+    <div class="brand"><span class="brand-mark">SR</span><span>转向器工作台</span></div>
+    <p class="workspace-label">小白马 · 美国站 VC1</p>
+    <nav class="nav" aria-label="模块导航">
+      <button class="nav-item active" data-view="overview"><span>▦</span>经营总览</button>
+      <button class="nav-item" data-view="alerts"><span>△</span>预警中心 <b>160</b></button>
+      <button class="nav-item" data-view="actions"><span>✓</span>行动队列 <b>1,447</b></button>
+      <p class="nav-group">分析模块</p>
+      <button class="nav-item" data-view="module-a"><span>A</span>周环比监控</button>
+      <button class="nav-item" data-view="module-b"><span>B</span>掉量归因</button>
+      <button class="nav-item" data-view="module-c"><span>C</span>活动重构</button>
+      <button class="nav-item" data-view="module-d"><span>D</span>流量治理</button>
+      <button class="nav-item" data-view="module-f"><span>F</span>潜力词</button>
+      <button class="nav-item" data-view="module-g"><span>G</span>利润护栏</button>
+    </nav>
+    <div class="sidebar-foot"><span class="live-dot"></span>数据快照已加载<br><small>W35 vs W34 · 成本 2026-08</small></div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">经营驾驶舱 / 每周复盘</p>
+        <h1 id="page-title">转向器广告复盘工作台</h1>
+      </div>
+      <div class="header-actions">
+        <span class="date-chip">数据周期：2026-W35 vs W34</span>
+        <button class="primary" id="queue-button">进入行动队列 <span>→</span></button>
+      </div>
+    </header>
+
+    <section class="hero-panel" id="overview">
+      <div>
+        <p class="eyebrow green">本周经营焦点</p>
+        <h2>先解决直接原因，再决定是否加投</h2>
+        <p class="hero-copy">160 个 ASIN 触发周环比预警。请优先处理链接、购物车、库存和涨价等直接经营异常；所有增投建议须通过模块 G 的目标 ACOS 校验。</p>
+      </div>
+      <div class="hero-rule">
+        <span>本周处理顺序</span>
+        <strong>修复经营问题 → 清理无效流量 → 重构活动 → 测试增投</strong>
+      </div>
+    </section>
+
+    <section class="metrics" aria-label="核心指标">
+      <article class="metric-card alert-card"><span class="metric-label">周环比预警 ASIN</span><strong>160</strong><p><span class="trend down">↑ 4.8%</span> 占监控 ASIN 4.8%</p></article>
+      <article class="metric-card"><span class="metric-label">已识别掉量起点</span><strong>154</strong><p>进入模块 B 原因判断</p></article>
+      <article class="metric-card"><span class="metric-label">待运营确认动作</span><strong>1,447</strong><p>C / D / E / F 汇总</p></article>
+      <article class="metric-card profit-card"><span class="metric-label">可增投 ASIN</span><strong>504</strong><p>利润线处于安全区</p></article>
+    </section>
+
+    <section class="section-grid">
+      <article class="panel priority-panel" id="alerts">
+        <div class="panel-head"><div><p class="eyebrow">优先处理</p><h2>本周预警分流</h2></div><button class="text-button" data-view="actions">查看全部 →</button></div>
+        <div class="priority-list">
+          <div class="priority-row"><span class="priority-number p0">P0</span><div><strong>直接经营异常</strong><p>链接 / 购物车 / 库存问题优先修复，暂停以提价或加价解决。</p></div><span class="count">154</span></div>
+          <div class="priority-row"><span class="priority-number p1">P1</span><div><strong>止损与广告结构治理</strong><p>活动拆出、重复活动处理、否词候选进入运营确认。</p></div><span class="count">1,028</span></div>
+          <div class="priority-row"><span class="priority-number p2">P2</span><div><strong>利润内增长测试</strong><p>潜力词或拆出增投，仅在目标 ACOS 内小步测试。</p></div><span class="count">419</span></div>
+        </div>
+      </article>
+
+      <article class="panel health-panel">
+        <div class="panel-head"><div><p class="eyebrow">工作台闭环</p><h2>处理状态</h2></div><span class="mini-badge">每周一刷新</span></div>
+        <div class="flow"><div class="flow-step complete"><span>1</span><strong>发现预警</strong><small>模块 A</small></div><i></i><div class="flow-step complete"><span>2</span><strong>定位原因</strong><small>模块 B</small></div><i></i><div class="flow-step current"><span>3</span><strong>利润准入</strong><small>模块 G</small></div><i></i><div class="flow-step"><span>4</span><strong>形成处置</strong><small>C / D / E / F</small></div><i></i><div class="flow-step"><span>5</span><strong>7天复核</strong><small>回到 A / B</small></div></div>
+        <div class="guardrail"><span class="guard-icon">G</span><div><strong>利润护栏是动作准入闸门</strong><p>当前 ACOS 高于盈亏平衡线时，增投建议自动降级为结构治理。</p></div></div>
+      </article>
+    </section>
+
+    <section class="panel queue-panel" id="actions">
+      <div class="panel-head">
+        <div><p class="eyebrow">统一行动队列</p><h2>待运营确认</h2></div>
+        <div class="filter-group" role="group" aria-label="行动队列筛选">
+          <button class="filter active" data-filter="all">全部</button><button class="filter" data-filter="P0">P0 直接原因</button><button class="filter" data-filter="P1">P1 止损治理</button><button class="filter" data-filter="P2">P2 增长测试</button>
+        </div>
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>优先级</th><th>ASIN / 对象</th><th>问题或机会</th><th>核心证据</th><th>建议动作</th><th>利润约束</th><th>状态</th></tr></thead>
+        <tbody id="action-rows">
+          <tr data-priority="P0"><td><span class="priority-number p0">P0</span></td><td><strong>B0CBS97JLD</strong><small>模块 B</small></td><td>库存异常</td><td>THIRD_PARTY 可售库存 = 2</td><td>补货并核对各仓可售库存</td><td>冻结增投</td><td><span class="status waiting">待确认</span></td></tr>
+          <tr data-priority="P0"><td><span class="priority-number p0">P0</span></td><td><strong>B0CD241Q7W</strong><small>模块 B</small></td><td>购物车丢失</td><td>SMC：无购物车或购物车异常</td><td>排查 Buy Box 资格、价格与配送</td><td>冻结增投</td><td><span class="status waiting">待确认</span></td></tr>
+          <tr data-priority="P1"><td><span class="priority-number p1">P1</span></td><td><strong>SP-AUTO-MIX…</strong><small>活动 49811275669002</small></td><td>多 ASIN 适配冲突</td><td>873 个 ASIN；高冲突词 41</td><td>按适配族群拆出重建</td><td>先治理后增投</td><td><span class="status waiting">待运营确认</span></td></tr>
+          <tr data-priority="P1"><td><span class="priority-number p1">P1</span></td><td><strong>power steering rack…</strong><small>B0GGRPCTLZ</small></td><td>候选否词</td><td>不相关品牌；近 7 天 0 订单</td><td>等待模块 E 校验</td><td>无需</td><td><span class="status review">待校验</span></td></tr>
+          <tr data-priority="P2"><td><span class="priority-number p2">P2</span></td><td><strong>2005 ford f150…</strong><small>B0GTT2ZVN4</small></td><td>机会词（有出单未覆盖）</td><td>2 单 / $360.98 销售额</td><td>精准匹配新建投放，7 天复核</td><td>目标 ACOS 内测试</td><td><span class="status testing">待运营确认</span></td></tr>
+        </tbody>
+      </table></div>
+      <p class="table-note">示例展示当前结果中的典型记录。实际执行以 `04_分析结果` 中各模块最终文件为唯一依据。</p>
+    </section>
+
+    <section class="module-section">
+      <div class="section-title"><div><p class="eyebrow">模块入口</p><h2>从监控到经营决策</h2></div><p>点击模块卡片查看其角色与当前产出。</p></div>
+      <div class="module-grid">
+        <button class="module-card a" data-view="module-a"><span>A</span><div><strong>ASIN 周环比监控</strong><p>全量扫描单量、销售额、TACOS 与广告活动。</p><small>160 个预警 ASIN</small></div><b>→</b></button>
+        <button class="module-card b" data-view="module-b"><span>B</span><div><strong>掉量原因归因</strong><p>按 21 天时间窗定位直接异常因素。</p><small>154 条归因结论</small></div><b>→</b></button>
+        <button class="module-card c" data-view="module-c"><span>C</span><div><strong>活动诊断与重构</strong><p>处理多 ASIN 冲突与重复活动。</p><small>431 条活动处置</small></div><b>→</b></button>
+        <button class="module-card d" data-view="module-d"><span>D/E</span><div><strong>无效流量与否词校验</strong><p>先识别，再校验，避免误伤适配词。</p><small>597 条候选待确认</small></div><b>→</b></button>
+        <button class="module-card f" data-view="module-f"><span>F</span><div><strong>潜力词</strong><p>寻找有订单但尚未覆盖的搜索词。</p><small>419 个增长机会</small></div><b>→</b></button>
+        <button class="module-card g" data-view="module-g"><span>G</span><div><strong>盈亏平衡 ACOS</strong><p>所有增投动作的经营护栏。</p><small>504 个可增投 ASIN</small></div><b>→</b></button>
+      </div>
+    </section>
+  </main>
+  <div class="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script> -->
+</body>
+</html>

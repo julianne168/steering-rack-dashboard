@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>转向器驾驶舱</title>
+  <link rel="stylesheet" href="dashboard.css">
+  <style>
+    :root{--blue:#3b82f6;--green:#42b983;--ink:#263548;--muted:#8b98aa;--line:#e7ebf2;--bg:#f5f7fb;--panel:#fff;--red:#ef746f;--amber:#f1ab52}
+    body{background:var(--bg)} .global-header,.left-nav,.right-rail{background:rgba(255,255,255,.96)}
+    .summary-grid article,.panel,.goal-card{border-color:var(--line);box-shadow:0 1px 2px rgba(29,42,62,.025)}
+    .main-action{background:var(--blue);box-shadow:0 5px 12px rgba(59,130,246,.18)}
+    .filters button.active,.nav-link:hover,.nav-link.active{background:#edf4ff;color:#3b82f6}
+    .source{background:#ebf9f1;color:#2f9b67}.tag.p0{background:#fff0ee;color:#db655f}.tag.p1{background:#fff6e8;color:#c78832}.tag.p2{background:#eaf9f1;color:#299866}
+    .rail-title{border-color:#cfe0ff;color:#3b82f6}.data-status{border-top:1px solid var(--line);padding-top:18px}
+  </style>
+  <style>.left-nav .nav-link .letter{display:none}</style>
+  <style>.shortcut-bar a{border:1px solid #edf0f3;background:#fff;border-radius:10px;padding:8px 13px;color:#6b7580;font:13px Inter,"Microsoft YaHei",sans-serif;text-decoration:none}.shortcut-bar a:hover{border-color:#afd0ff;color:#2877dc;background:#eef5ff}</style>
+</head>
+<body>
+  <header class="global-header">
+    <div class="workbench-name"><span class="blue-dot"></span><strong>转向器驾驶舱</strong><span>陈喆妍 · 周度监控</span></div>
+    <div class="shortcut-bar"><a href="module.html?module=a">△ 风险与预警</a><a href="#queue">▥ 本周行动热力</a><a href="module.html?module=b">◎ 异常归因</a><a href="#review">✓ 7天复核</a></div>
+  </header>
+  <aside class="left-nav">
+    <p class="nav-caption">监控总览</p>
+    <a class="nav-link active" href="#overview"><span>⌂</span>广告监控看板</a>
+    <p class="nav-caption">监控视图</p>
+    <a class="nav-link" href="module.html?module=a"><span class="letter a">A</span>经营预警 <b>160</b></a>
+    <a class="nav-link" href="module.html?module=b"><span class="letter b">B</span>异常归因 <b>154</b></a>
+    <a class="nav-link" href="module.html?module=c"><span class="letter c">C</span>投放结构监控</a>
+    <a class="nav-link" href="module.html?module=d"><span class="letter d">D/E</span>无效流量监控</a>
+    <a class="nav-link" href="module.html?module=f"><span class="letter f">F</span>增长机会监控</a>
+    <a class="nav-link" href="module.html?module=g"><span class="letter g">G</span>利润护栏监控</a>
+    <p class="nav-caption space">协同</p>
+    <a class="nav-link" href="#queue"><span>☑</span>统一行动队列 <b>1,447</b></a>
+    <a class="nav-link" href="#data"><span>▤</span>数据与质检</a>
+    <div class="nav-bottom">‹ 折叠导航</div>
+  </aside>
+  <main class="center" id="overview">
+    <section class="welcome-row"><div><p class="section-kicker">2026-W35 vs W34 · 转向器广告全景监控</p><h1>本周广告监控结论</h1><p>识别经营异常、投放风险和增长空间；先排除直接原因，再在利润线内决定广告动作。</p></div><button class="main-action" id="jumpQueue">查看待干预项 →</button></section>
+    <section class="summary-grid">
+      <article><span>经营风险信号</span><strong>160</strong><small class="red">4.8% ASIN 触发预警</small></article>
+      <article><span>已定位异常原因</span><strong>154</strong><small>日粒度 21 天监控窗口</small></article>
+      <article><span>待干预广告项</span><strong>1,447</strong><small class="amber">结构、流量与增长机会</small></article>
+      <article><span>利润安全的增投空间</span><strong>504</strong><small class="green">基于 2026-08 成本</small></article>
+    </section>
+    <section class="panel flow-panel">
+      <div class="panel-title"><div><span class="icon">◈</span><strong>广告监控闭环</strong><small>从风险信号到干预效果的连续监控</small></div><span class="source">数据已加载</span></div>
+      <div class="workflow"><a href="module.html?module=a"><b>1</b><span>模块 A</span><strong>发现预警</strong><small>160 个 ASIN</small></a><i>→</i><a href="module.html?module=b"><b>2</b><span>模块 B</span><strong>定位原因</strong><small>154 条结论</small></a><i>→</i><a href="module.html?module=g"><b>3</b><span>模块 G</span><strong>利润准入</strong><small>504 可增投</small></a><i>→</i><div><b>4</b><span>C / D / E / F</span><strong>形成处置</strong><small>1,447 待确认</small></div><i>→</i><div><b>5</b><span>7 天</span><strong>效果复核</strong><small>回到 A / B</small></div></div>
+    </section>
+    <section class="two-col">
+      <article class="panel">
+        <div class="panel-title"><div><span class="icon">▥</span><strong>广告风险与干预分布</strong><small>需要持续跟踪的异常、治理项与增长机会</small></div><button class="link-button" id="toggleBars">切换为数量</button></div>
+        <div class="bar-chart" id="barChart"><div><label>模块 B · 直接经营异常</label><p><i class="bar b1" style="--value:26%"></i><strong>154</strong></p></div><div><label>模块 C · 活动重构</label><p><i class="bar b2" style="--value:72%"></i><strong>431</strong></p></div><div><label>模块 D/E · 否词校验</label><p><i class="bar b3" style="--value:100%"></i><strong>597</strong></p></div><div><label>模块 F · 潜力词</label><p><i class="bar b4" style="--value:70%"></i><strong>419</strong></p></div></div>
+      </article>
+      <article class="panel priority-card">
+        <div class="panel-title"><div><span class="icon">⚑</span><strong>本周优先干预</strong><small>按对销售与利润影响的直接程度排序</small></div></div>
+        <ol><li><span class="tag p0">P0</span><div><strong>修复直接经营异常</strong><small>链接、购物车、库存、涨价</small></div><b>154</b></li><li><span class="tag p1">P1</span><div><strong>广告结构与无效流量治理</strong><small>活动重构、否词校验</small></div><b>1,028</b></li><li><span class="tag p2">P2</span><div><strong>利润线内增长测试</strong><small>潜力词、拆出增投</small></div><b>419</b></li></ol>
+      </article>
+    </section>
+    <section class="panel queue" id="queue">
+      <div class="panel-title"><div><span class="icon">☑</span><strong>统一行动队列</strong><small>点击模块可进入结果与处理工作区</small></div><div class="filters"><button class="active" data-filter="all">全部</button><button data-filter="p0">P0 直接原因</button><button data-filter="p1">P1 治理</button><button data-filter="p2">P2 测试</button></div></div>
+      <div class="queue-table"><div class="tr th"><span>优先级</span><span>ASIN / 对象</span><span>问题 / 机会</span><span>建议动作</span><span>状态</span></div><div class="tr" data-priority="p0"><span><b class="tag p0">P0</b></span><span><strong>B0CBS97JLD</strong><small>模块 B</small></span><span>库存异常<br><small>THIRD_PARTY 可售 = 2</small></span><span>补货并核对各仓可售库存</span><span class="status amber">待运营确认</span></div><div class="tr" data-priority="p0"><span><b class="tag p0">P0</b></span><span><strong>B0CD241Q7W</strong><small>模块 B</small></span><span>购物车异常<br><small>SMC 无购物车标签</small></span><span>排查 Buy Box、价格与配送</span><span class="status amber">待运营确认</span></div><div class="tr" data-priority="p1"><span><b class="tag p1">P1</b></span><span><strong>SP-AUTO-MIX…</strong><small>模块 C</small></span><span>多 ASIN 适配冲突<br><small>高冲突词 41</small></span><span>按适配族群拆出重建</span><span class="status blue">待运营确认</span></div><div class="tr" data-priority="p2"><span><b class="tag p2">P2</b></span><span><strong>2005 ford f150…</strong><small>模块 F</small></span><span>机会词<br><small>2 单 / $360.98</small></span><span>目标 ACOS 内精准测试</span><span class="status green">待运营确认</span></div></div>
+    </section>
+    <section class="data-status" id="data"><span id="review">7 天复核</span><strong>回到模块 A / B 复核单量、销售额、TACOS 与直接异常是否改善</strong><strong>模块 A：W35 vs W34</strong><strong>模块 B：21 天窗口</strong><strong>模块 G：2026-08 成本</strong><small>原数据与结果文件保存在资料包中，可从各模块工作区打开。</small></section>
+  </main>
+  <aside class="right-rail">
+    <div class="rail-title"><span>⚑</span><strong>本周核心指标</strong><small>转向器 · VC1</small></div>
+    <article class="goal-card"><span>预警 ASIN 覆盖</span><strong>160</strong><small>监控范围 3,356 个 ASIN</small><div class="progress"><i style="width:4.8%"></i></div><em>预警占比 4.8%</em></article>
+    <article class="goal-card"><span>主要原因已定位</span><strong>154</strong><small>掉量 ASIN 已进入归因</small><div class="progress green"><i style="width:96.3%"></i></div><em>归因覆盖 96.3%</em></article>
+    <article class="goal-card"><span>利润线内可增投</span><strong>504</strong><small>以最近完整月损益为准</small><div class="progress amber"><i style="width:14%"></i></div><em>占有销量 ASIN 的参考范围</em></article>
+    <article class="goal-card muted-card"><span>否词安全校验</span><strong>597</strong><small>候选词须经模块 E 确认</small><div class="progress purple"><i style="width:100%"></i></div><em>禁止未经校验直接否定</em></article>
+  </aside>
+  <script src="data.js"></script>
+  <script src="dashboard.js"></script>
+  <script>
+    document.querySelectorAll('.workflow > a span').forEach((element, index) => { element.textContent = ['预警', '归因', '利润准入'][index]; });
+    document.querySelectorAll('.workflow > div span').forEach((element, index) => { element.textContent = ['活动治理', '7 天复核'][index]; });
+    document.querySelectorAll('.queue-table .tr:not(.th) > span:nth-child(2) small').forEach(element => { element.textContent = element.textContent.replace('模块 B', '掉量归因').replace('模块 C', '活动重构').replace('模块 F', '潜力词'); });
+    document.querySelectorAll('.data-status strong').forEach((element, index) => { element.textContent = ['周环比：W35 vs W34', '归因：21 天窗口', '利润成本：2026-08'][index]; });
+  </script>
+</body>
+</html>
