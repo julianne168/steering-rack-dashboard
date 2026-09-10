@@ -27,11 +27,13 @@ body.module-mode .module-main{margin-right:0;max-width:none}
 #module-view[hidden]{display:none}
 .module-main{min-height:calc(100vh - 84px)}
 .module-banner{grid-template-columns:minmax(0,1fr) auto}
+.left-nav{width:238px;padding:20px 12px}.center{margin-left:238px}.nav-link{gap:8px;padding:10px 12px}.nav-caption{margin-left:8px}.nav-bottom{left:12px;right:12px}
 .module-layout{align-items:start}.module-layout > .module-panel{padding:18px 20px}.logic-list{gap:8px;margin-top:12px}.conclusion-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));align-items:stretch;gap:8px;margin-top:12px}.conclusion-chip{min-width:0;min-height:84px;display:flex;flex-direction:column}.conclusion-chip strong{margin-top:auto}
 .analysis-charts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:18px}.chart-card{min-width:0;background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 20px}.chart-heading{display:flex;justify-content:space-between;gap:12px}.chart-heading small,.chart-note{display:block;margin-top:4px;color:#75848d;font-size:12px}.bar-list{display:grid;gap:11px;margin-top:16px}.bar-row{display:grid;grid-template-columns:minmax(110px,1.35fr) minmax(90px,2fr) auto;align-items:center;gap:9px}.bar-label{overflow:hidden;color:#51616c;font-size:12px;text-overflow:ellipsis;white-space:nowrap}.bar-track{height:8px;overflow:hidden;border-radius:99px;background:#edf2f4}.bar-track i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#49a67c,#83cda3)}.bar-row strong{min-width:48px;color:#1e3850;font-size:12px;text-align:right;white-space:nowrap}
 .result-actions{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap}.alert-filter{display:flex;align-items:center;gap:7px;color:#657581;font-size:12px;font-weight:700}.alert-filter select{max-width:260px;border:1px solid #dce5ec;border-radius:8px;background:#fff;padding:7px 28px 7px 9px;color:#40515e;font:12px inherit;cursor:pointer}
 .table-pagination{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;color:#73808a;font-size:12px}.table-pagination div{display:flex;gap:7px}.table-pagination button{border:1px solid #dce5ec;border-radius:8px;background:#fff;padding:6px 10px;color:#3b82f6;font:600 12px inherit;cursor:pointer}.table-pagination button:hover:not(:disabled){border-color:#9dc5ff;background:#eef5ff}.table-pagination button:disabled{cursor:not-allowed;color:#b2bbc4;background:#f7f9fb}@media(max-width:560px){.table-pagination{align-items:flex-start;flex-direction:column}.table-pagination div{width:100%;justify-content:space-between}.table-pagination button{padding:6px 8px}}
 @media(max-width:960px){body.module-mode .module-main{margin-right:0}}
+@media(min-width:701px) and (max-width:1400px){.left-nav{width:210px}.center{margin-left:210px}}
 @media(max-width:760px){.analysis-charts{grid-template-columns:1fr}.bar-row{grid-template-columns:minmax(90px,1.2fr) minmax(74px,2fr) auto}}
 </style></head>
 <body data-build="single-file">
@@ -43,12 +45,12 @@ body.module-mode .module-main{margin-right:0;max-width:none}
     <p class="nav-caption">监控总览</p>
     <a class="nav-link active" href="#overview"><span>⌂</span>广告监控看板</a>
     <p class="nav-caption">监控视图</p>
-    <a class="nav-link" href="#module-a"><span class="letter a">A</span>经营预警 <b>160</b></a>
-    <a class="nav-link" href="#module-b"><span class="letter b">B</span>异常归因 <b>154</b></a>
-    <a class="nav-link" href="#module-c"><span class="letter c">C</span>投放结构监控</a>
-    <a class="nav-link" href="#module-d"><span class="letter d">D/E</span>无效流量监控</a>
-    <a class="nav-link" href="#module-f"><span class="letter f">F</span>增长机会监控</a>
-    <a class="nav-link" href="#module-g"><span class="letter g">G</span>利润护栏监控</a>
+    <a class="nav-link" href="#module-a">经营预警 <b>160</b></a>
+    <a class="nav-link" href="#module-b">异常归因 <b>154</b></a>
+    <a class="nav-link" href="#module-g">利润准入</a>
+    <a class="nav-link" href="#module-c">活动重构</a>
+    <a class="nav-link" href="#module-d">否词校验</a>
+    <a class="nav-link" href="#module-f">潜力词</a>
     <p class="nav-caption space">协同</p>
     <a class="nav-link" href="#queue"><span>☑</span>统一行动队列 <b>1,447</b></a>
     <a class="nav-link" href="#data"><span>▤</span>数据与质检</a>
