@@ -27,6 +27,7 @@ body.module-mode .module-main{margin-right:0;max-width:none}
 #module-view[hidden]{display:none}
 .module-main{min-height:calc(100vh - 84px)}
 .module-banner{grid-template-columns:minmax(0,1fr) auto}
+.module-layout{align-items:start}.module-layout > .module-panel{padding:18px 20px}.logic-list{gap:8px;margin-top:12px}.conclusion-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));align-items:stretch;gap:8px;margin-top:12px}.conclusion-chip{min-width:0;min-height:84px;display:flex;flex-direction:column}.conclusion-chip strong{margin-top:auto}
 .result-actions{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap}.alert-filter{display:flex;align-items:center;gap:7px;color:#657581;font-size:12px;font-weight:700}.alert-filter select{max-width:260px;border:1px solid #dce5ec;border-radius:8px;background:#fff;padding:7px 28px 7px 9px;color:#40515e;font:12px inherit;cursor:pointer}
 .table-pagination{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;color:#73808a;font-size:12px}.table-pagination div{display:flex;gap:7px}.table-pagination button{border:1px solid #dce5ec;border-radius:8px;background:#fff;padding:6px 10px;color:#3b82f6;font:600 12px inherit;cursor:pointer}.table-pagination button:hover:not(:disabled){border-color:#9dc5ff;background:#eef5ff}.table-pagination button:disabled{cursor:not-allowed;color:#b2bbc4;background:#f7f9fb}@media(max-width:560px){.table-pagination{align-items:flex-start;flex-direction:column}.table-pagination div{width:100%;justify-content:space-between}.table-pagination button{padding:6px 8px}}
 @media(max-width:960px){body.module-mode .module-main{margin-right:0}}
@@ -135,7 +136,9 @@ window.WORKBENCH_FULL_DATA = {"a":{"source":"模块A_最终预警明细表_2026-
     const rows = raw.rows?.length ? raw.rows : (result.rows || []);
     const flow = [['a','预警'],['b','归因'],['g','利润准入'],['c','活动重构'],['d','否词校验'],['f','潜力词']]
       .map(([key,label]) => '<a href="#module-' + key + '" class="flow-link ' + (key === id ? 'current' : '') + '">' + label + '</a>').join('<i>→</i>') + '<i>→</i><a href="#review" class="flow-link review" data-review>7 天复核</a>';
-    const distributionHtml = distribution.length ? distribution.map(item => '<div class="conclusion-chip ' + stateClass(item.label) + '"><span>' + esc(item.label) + '</span><strong>' + Number(item.value || 0).toLocaleString() + '</strong></div>').join('') : '<p class="empty-note">当前尚未同步结论分布。</p>';
+    // “未标记”不属于需要处理的监控结论，不在模块结论区占用卡片；原始明细仍完整保留。
+    const actionableDistribution = distribution.filter(item => String(item.label || '').trim() !== '未标记');
+    const distributionHtml = actionableDistribution.length ? actionableDistribution.map(item => '<div class="conclusion-chip ' + stateClass(item.label) + '"><span>' + esc(item.label) + '</span><strong>' + Number(item.value || 0).toLocaleString() + '</strong></div>').join('') : '<p class="empty-note">当前没有需要处理的监控结论。</p>';
     const tableHtml = displayColumns.length && rows.length ? '<div class="full-result-table"></div>' : '<div class="empty-note">暂无真实分析明细。运行本模块分析并刷新工作台数据后将自动显示。</div>';
     const files = info.files.map(([label, href]) => '<a class="output" href="' + href + '"><strong>打开' + esc(label) + ' <span>↗</span></strong><small>本地结果文件 · 以最新分析结果为准</small></a>').join('');
     const alertFlags = id === 'a' ? [...new Set(rows.map(row => String(row['预警标记'] || '未标记')))].sort() : [];
