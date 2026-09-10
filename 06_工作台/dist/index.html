@@ -27,6 +27,7 @@ body.module-mode .module-main{margin-right:0;max-width:none}
 #module-view[hidden]{display:none}
 .module-main{min-height:calc(100vh - 84px)}
 .module-banner{grid-template-columns:minmax(0,1fr) auto}
+.table-pagination{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;color:#73808a;font-size:12px}.table-pagination div{display:flex;gap:7px}.table-pagination button{border:1px solid #dce5ec;border-radius:8px;background:#fff;padding:6px 10px;color:#3b82f6;font:600 12px inherit;cursor:pointer}.table-pagination button:hover:not(:disabled){border-color:#9dc5ff;background:#eef5ff}.table-pagination button:disabled{cursor:not-allowed;color:#b2bbc4;background:#f7f9fb}@media(max-width:560px){.table-pagination{align-items:flex-start;flex-direction:column}.table-pagination div{width:100%;justify-content:space-between}.table-pagination button{padding:6px 8px}}
 @media(max-width:960px){body.module-mode .module-main{margin-right:0}}
 </style></head>
 <body data-build="single-file">
@@ -131,9 +132,26 @@ window.WORKBENCH_FULL_DATA = {"a":{"source":"模块A_最终预警明细表_2026-
     const flow = [['a','预警'],['b','归因'],['g','利润准入'],['c','活动重构'],['d','否词校验'],['f','潜力词']]
       .map(([key,label]) => '<a href="#module-' + key + '" class="flow-link ' + (key === id ? 'current' : '') + '">' + label + '</a>').join('<i>→</i>') + '<i>→</i><a href="#review" class="flow-link review" data-review>7 天复核</a>';
     const distributionHtml = distribution.length ? distribution.map(item => '<div class="conclusion-chip ' + stateClass(item.label) + '"><span>' + esc(item.label) + '</span><strong>' + Number(item.value || 0).toLocaleString() + '</strong></div>').join('') : '<p class="empty-note">当前尚未同步结论分布。</p>';
-    const tableHtml = columns.length && rows.length ? '<div class="result-table-wrap"><table class="result-table"><thead><tr>' + columns.map(column => '<th>' + esc(column[0]) + '</th>').join('') + '</tr></thead><tbody>' + rows.map(row => '<tr>' + columns.map(column => '<td title="' + esc(row[column[1]]) + '">' + esc(shorter(row[column[1]])) + '</td>').join('') + '</tr>').join('') + '</tbody></table></div>' : '<div class="empty-note">暂无真实分析明细。运行本模块分析并刷新工作台数据后将自动显示。</div>';
+    const tableHtml = columns.length && rows.length ? '<div class="full-result-table"></div>' : '<div class="empty-note">暂无真实分析明细。运行本模块分析并刷新工作台数据后将自动显示。</div>';
     const files = info.files.map(([label, href]) => '<a class="output" href="' + href + '"><strong>打开' + esc(label) + ' <span>↗</span></strong><small>本地结果文件 · 以最新分析结果为准</small></a>').join('');
     workspace.innerHTML = '<section class="module-banner"><div><p class="eyebrow green">广告监控视图 · ' + esc(info.scope) + '</p><h1>' + esc(info.title) + '</h1><p>' + esc(result.headline || '暂无模块摘要') + '</p></div><div class="module-kpi"><strong>' + count + '</strong><span>' + esc(info.kpi) + '</span><small>同步：' + esc(data.refreshedAt || '待同步') + '</small></div></section><nav class="module-flow" aria-label="广告监控闭环">' + flow + '</nav><section class="module-layout"><article class="module-panel"><p class="eyebrow">监控判断逻辑</p><ol class="logic-list">' + logic.map((item,index) => '<li><b>' + (index+1) + '</b><span>' + esc(item) + '</span></li>').join('') + '</ol></article><article class="module-panel"><p class="eyebrow">监控结论分布</p><div class="conclusion-list">' + distributionHtml + '</div></article></section><section class="module-panel results-panel"><div class="result-heading"><div><p class="eyebrow">全部真实分析明细</p><h2>已纳入全部 ' + rows.length.toLocaleString() + ' 条结果</h2><p>字段和记录均来自本模块的最新分析结果文件，可横向滚动查看。</p></div><span class="status-pill">' + (rows.length ? '真实数据 ' + rows.length.toLocaleString() + ' 条' : '等待数据同步') + '</span></div>' + tableHtml + '</section><section class="module-panel output-panel"><div><p class="eyebrow">完整结果文件</p><h2>在本地打开原始结果</h2></div><div class="output-list">' + files + '</div><p class="file-help">本文件放在 <code>06_工作台/dist</code> 目录时，结果文件链接可直接在本地打开。</p></section>';
+    const pageSize = 10;
+    const pageCount = Math.max(1, Math.ceil(rows.length / pageSize));
+    let page = 1;
+    const renderDetailPage = () => {
+      const start = (page - 1) * pageSize;
+      const currentRows = rows.slice(start, start + pageSize);
+      const table = '<div class="result-table-wrap"><table class="result-table"><thead><tr>' + columns.map(column => '<th>' + esc(column[0]) + '</th>').join('') + '</tr></thead><tbody>' + currentRows.map(row => '<tr>' + columns.map(column => '<td title="' + esc(row[column[1]]) + '">' + esc(shorter(row[column[1]])) + '</td>').join('') + '</tr>').join('') + '</tbody></table></div>';
+      const controls = '<nav class="table-pagination" aria-label="分析明细分页"><span>第 ' + page + ' / ' + pageCount + ' 页 · 显示第 ' + (start + 1) + '–' + Math.min(start + pageSize, rows.length) + ' 条</span><div><button type="button" data-page="first" ' + (page === 1 ? 'disabled' : '') + '>首页</button><button type="button" data-page="prev" ' + (page === 1 ? 'disabled' : '') + '>上一页</button><button type="button" data-page="next" ' + (page === pageCount ? 'disabled' : '') + '>下一页</button><button type="button" data-page="last" ' + (page === pageCount ? 'disabled' : '') + '>末页</button></div></nav>';
+      const container = workspace.querySelector('.full-result-table');
+      container.innerHTML = table + controls;
+      container.querySelectorAll('[data-page]').forEach(button => button.addEventListener('click', () => {
+        const action = button.dataset.page;
+        page = action === 'first' ? 1 : action === 'prev' ? Math.max(1, page - 1) : action === 'next' ? Math.min(pageCount, page + 1) : pageCount;
+        renderDetailPage();
+      }));
+    };
+    if (columns.length && rows.length) renderDetailPage();
     document.body.classList.add('module-mode'); home.hidden = true; moduleView.hidden = false; setActive(id); document.title = info.title + ' · 转向器驾驶舱'; window.scrollTo(0,0);
   }
   function route() {
