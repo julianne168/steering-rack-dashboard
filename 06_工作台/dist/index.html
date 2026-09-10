@@ -124,7 +124,8 @@ window.WORKBENCH_FULL_DATA = {"a":{"source":"模块A_最终预警明细表_2026-
     const info = modules[id]; if (!info) return setHome();
     const result = data.moduleResults?.[id] || {};
     const count = Number(data.metrics?.[info.key] || 0).toLocaleString();
-    const logic = result.insights?.length ? result.insights : ['当前尚未同步本模块判断逻辑，请刷新数据后重试。'];
+    const logic = result.insights?.length ? [...result.insights] : ['当前尚未同步本模块判断逻辑，请刷新数据后重试。'];
+    if (id === 'a' && logic.length > 1) logic[1] = '更新频率：周度更新。';
     const distribution = result.distribution || [];
     const raw = fullData[id] || {};
     const columns = raw.columns?.length ? raw.columns : (result.columns || []);
