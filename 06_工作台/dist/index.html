@@ -128,7 +128,7 @@ window.WORKBENCH_FULL_DATA = {"a":{"source":"模块A_最终预警明细表_2026-
     const distribution = result.distribution || [];
     const raw = fullData[id] || {};
     const columns = raw.columns?.length ? raw.columns : (result.columns || []);
-    const moduleAIndicators = ['ASIN','上周单量','上周销售额','上周曝光','上周点击','上周CTR%','上周CVR%','上周ACOS%','上周ROAS','上周TACOS%','曝光环比%','CTR环比%','CVR环比%','ACOS环比%','TACOS环比%'];
+    const moduleAIndicators = ['ASIN','预警标记','广告活动名称','上周单量','上周销售额','上周曝光','上周点击','上周CTR%','上周CVR%','上周ACOS%','上周ROAS','上周TACOS%','曝光环比%','CTR环比%','CVR环比%','ACOS环比%','TACOS环比%'];
     const displayColumns = id === 'a' ? moduleAIndicators.map(key => columns.find(column => column[1] === key)).filter(Boolean) : columns;
     const rows = raw.rows?.length ? raw.rows : (result.rows || []);
     const flow = [['a','预警'],['b','归因'],['g','利润准入'],['c','活动重构'],['d','否词校验'],['f','潜力词']]
