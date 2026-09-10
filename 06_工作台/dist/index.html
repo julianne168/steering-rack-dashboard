@@ -28,9 +28,11 @@ body.module-mode .module-main{margin-right:0;max-width:none}
 .module-main{min-height:calc(100vh - 84px)}
 .module-banner{grid-template-columns:minmax(0,1fr) auto}
 .module-layout{align-items:start}.module-layout > .module-panel{padding:18px 20px}.logic-list{gap:8px;margin-top:12px}.conclusion-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));align-items:stretch;gap:8px;margin-top:12px}.conclusion-chip{min-width:0;min-height:84px;display:flex;flex-direction:column}.conclusion-chip strong{margin-top:auto}
+.analysis-charts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:18px}.chart-card{min-width:0;background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 20px}.chart-heading{display:flex;justify-content:space-between;gap:12px}.chart-heading small,.chart-note{display:block;margin-top:4px;color:#75848d;font-size:12px}.bar-list{display:grid;gap:11px;margin-top:16px}.bar-row{display:grid;grid-template-columns:minmax(110px,1.35fr) minmax(90px,2fr) auto;align-items:center;gap:9px}.bar-label{overflow:hidden;color:#51616c;font-size:12px;text-overflow:ellipsis;white-space:nowrap}.bar-track{height:8px;overflow:hidden;border-radius:99px;background:#edf2f4}.bar-track i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#49a67c,#83cda3)}.bar-row strong{min-width:48px;color:#1e3850;font-size:12px;text-align:right;white-space:nowrap}
 .result-actions{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap}.alert-filter{display:flex;align-items:center;gap:7px;color:#657581;font-size:12px;font-weight:700}.alert-filter select{max-width:260px;border:1px solid #dce5ec;border-radius:8px;background:#fff;padding:7px 28px 7px 9px;color:#40515e;font:12px inherit;cursor:pointer}
 .table-pagination{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;color:#73808a;font-size:12px}.table-pagination div{display:flex;gap:7px}.table-pagination button{border:1px solid #dce5ec;border-radius:8px;background:#fff;padding:6px 10px;color:#3b82f6;font:600 12px inherit;cursor:pointer}.table-pagination button:hover:not(:disabled){border-color:#9dc5ff;background:#eef5ff}.table-pagination button:disabled{cursor:not-allowed;color:#b2bbc4;background:#f7f9fb}@media(max-width:560px){.table-pagination{align-items:flex-start;flex-direction:column}.table-pagination div{width:100%;justify-content:space-between}.table-pagination button{padding:6px 8px}}
 @media(max-width:960px){body.module-mode .module-main{margin-right:0}}
+@media(max-width:760px){.analysis-charts{grid-template-columns:1fr}.bar-row{grid-template-columns:minmax(90px,1.2fr) minmax(74px,2fr) auto}}
 </style></head>
 <body data-build="single-file">
   <header class="global-header">
@@ -116,6 +118,37 @@ window.WORKBENCH_FULL_DATA = {"a":{"source":"模块A_最终预警明细表_2026-
   const shorter = value => { const text = String(value ?? '—'); return text.length > 46 ? text.slice(0,46) + '…' : text; };
   const stateClass = label => /禁止|异常|直接原因|高于|风险/.test(String(label)) ? 'risk' : /可增投|可否定|增长|正常|安全/.test(String(label)) ? 'safe' : /待|候选|关注|预警/.test(String(label)) ? 'watch' : 'neutral';
   const setActive = id => document.querySelectorAll('.nav-link').forEach(link => link.classList.toggle('active', id ? link.getAttribute('href') === '#module-' + id : link.getAttribute('href') === '#overview'));
+  const chartConfigs = {
+    a:[{kind:'count',field:'预警标记',title:'预警类型构成',note:'按预警 ASIN 数量统计'},{kind:'sum',field:'ASIN',value:'上周销售额',title:'预警 ASIN 销售额 Top 5',note:'按上周销售额汇总'}],
+    b:[{kind:'count',field:'异常因素',title:'掉量原因构成',note:'按 ASIN 归因结果统计'},{kind:'count',field:'原因分类',title:'原因优先级分层',note:'直接原因优先处理'}],
+    c:[{kind:'count',field:'处置动作',title:'活动处置动作构成',note:'按待处理活动统计'},{kind:'sum',field:'原活动名',value:'错配花费',title:'错配花费 Top 5 活动',note:'按明细中的错配花费汇总'}],
+    d:[{kind:'count',field:'可否决',title:'否词处理建议构成',note:'按否定可执行性统计'},{kind:'count',field:'原判定类型',title:'候选问题类型 Top 5',note:'按原始判定类型统计'}],
+    f:[{kind:'count',field:'类型',title:'增长机会类型构成',note:'按机会词类型统计'},{kind:'sum',field:'建议匹配类型',value:'销售额',title:'机会销售额按匹配方式',note:'按建议匹配方式汇总'}],
+    g:[{kind:'count',field:'状态',title:'利润状态分布',note:'按 ASIN 当前利润状态统计'},{kind:'average',fields:['当前ACOS%','目标ACOS%','平衡ACOS%'],title:'整体 ACOS 水平',note:'所有纳入 ASIN 的平均值'}]
+  };
+  const numberValue = value => { const parsed = Number(String(value ?? '').replace(/[^0-9.-]/g, '')); return Number.isFinite(parsed) ? parsed : null; };
+  const topItems = (rows, config) => {
+    const bucket = new Map();
+    if (config.kind === 'average') {
+      return config.fields.map(field => {
+        const values = rows.map(row => numberValue(row[field])).filter(value => value !== null);
+        return {label:field.replace(/%$/, ''), value:values.length ? values.reduce((sum, value) => sum + value, 0) / values.length : 0, suffix:'%'};
+      });
+    }
+    rows.forEach(row => {
+      const label = String(row[config.field] ?? '').trim(); if (!label || label === '未标记') return;
+      const value = config.kind === 'sum' ? numberValue(row[config.value]) : 1;
+      if (value !== null) bucket.set(label, (bucket.get(label) || 0) + value);
+    });
+    return [...bucket.entries()].map(([label,value]) => ({label,value,suffix:config.kind === 'sum' ? '' : ' 项'})).sort((a,b) => b.value - a.value).slice(0,5);
+  };
+  const formatChartValue = item => item.suffix === '%' ? item.value.toFixed(2) + '%' : item.suffix ? Math.round(item.value).toLocaleString() + item.suffix : item.value.toLocaleString(undefined,{maximumFractionDigits:2});
+  const chartCard = (config, rows) => {
+    const items = topItems(rows, config); if (!items.length) return '<article class="chart-card"><p class="eyebrow">' + esc(config.title) + '</p><p class="chart-note">暂无可用图表数据</p></article>';
+    const max = Math.max(...items.map(item => item.value), 1);
+    return '<article class="chart-card"><div class="chart-heading"><div><p class="eyebrow">' + esc(config.title) + '</p><small>' + esc(config.note) + '</small></div></div><div class="bar-list">' + items.map(item => '<div class="bar-row"><div class="bar-label" title="' + esc(item.label) + '">' + esc(shorter(item.label)) + '</div><div class="bar-track"><i style="width:' + Math.max(3, item.value / max * 100).toFixed(1) + '%"></i></div><strong>' + formatChartValue(item) + '</strong></div>').join('') + '</div></article>';
+  };
+  const renderCharts = (id, rows) => { const configs = chartConfigs[id] || []; return configs.length ? '<section class="analysis-charts" aria-label="' + esc(modules[id]?.name || '模块') + '分析图表">' + configs.map(config => chartCard(config, rows)).join('') + '</section>' : ''; };
 
   function setHome(anchor) {
     document.body.classList.remove('module-mode');
@@ -145,7 +178,8 @@ window.WORKBENCH_FULL_DATA = {"a":{"source":"模块A_最终预警明细表_2026-
     const filterValues = filterConfig ? [...new Set(rows.map(row => String(row[filterConfig.field] || '').trim()).filter(Boolean))].sort() : [];
     const filterHtml = filterValues.length ? '<label class="alert-filter">' + filterConfig.label + '<select data-detail-filter><option value="">' + filterConfig.allLabel + '</option>' + filterValues.map(value => '<option value="' + esc(value) + '">' + esc(value) + '</option>').join('') + '</select></label>' : '';
     const conclusionTitle = id === 'b' ? 'ASIN 掉量原因' : '监控结论分布';
-    workspace.innerHTML = '<section class="module-banner"><div><p class="eyebrow green">广告监控视图 · ' + esc(info.scope) + '</p><h1>' + esc(info.title) + '</h1><p>' + esc(result.headline || '暂无模块摘要') + '</p></div><div class="module-kpi"><strong>' + count + '</strong><span>' + esc(info.kpi) + '</span><small>同步：' + esc(data.refreshedAt || '待同步') + '</small></div></section><nav class="module-flow" aria-label="广告监控闭环">' + flow + '</nav><section class="module-layout"><article class="module-panel"><p class="eyebrow">监控判断逻辑</p><ol class="logic-list">' + logic.map((item,index) => '<li><b>' + (index+1) + '</b><span>' + esc(item) + '</span></li>').join('') + '</ol></article><article class="module-panel"><p class="eyebrow">' + conclusionTitle + '</p><div class="conclusion-list">' + distributionHtml + '</div></article></section><section class="module-panel results-panel"><div class="result-heading"><div><p class="eyebrow">全部真实分析明细</p><h2>已纳入全部 ' + rows.length.toLocaleString() + ' 条结果</h2><p>字段和记录均来自本模块的最新分析结果文件，可横向滚动查看。</p></div><div class="result-actions">' + filterHtml + '<span class="status-pill detail-count">' + (rows.length ? '真实数据 ' + rows.length.toLocaleString() + ' 条' : '等待数据同步') + '</span></div></div>' + tableHtml + '</section><section class="module-panel output-panel"><div><p class="eyebrow">完整结果文件</p><h2>在本地打开原始结果</h2></div><div class="output-list">' + files + '</div><p class="file-help">本文件放在 <code>06_工作台/dist</code> 目录时，结果文件链接可直接在本地打开。</p></section>';
+    const chartHtml = renderCharts(id, rows);
+    workspace.innerHTML = '<section class="module-banner"><div><p class="eyebrow green">广告监控视图 · ' + esc(info.scope) + '</p><h1>' + esc(info.title) + '</h1><p>' + esc(result.headline || '暂无模块摘要') + '</p></div><div class="module-kpi"><strong>' + count + '</strong><span>' + esc(info.kpi) + '</span><small>同步：' + esc(data.refreshedAt || '待同步') + '</small></div></section><nav class="module-flow" aria-label="广告监控闭环">' + flow + '</nav><section class="module-layout"><article class="module-panel"><p class="eyebrow">监控判断逻辑</p><ol class="logic-list">' + logic.map((item,index) => '<li><b>' + (index+1) + '</b><span>' + esc(item) + '</span></li>').join('') + '</ol></article><article class="module-panel"><p class="eyebrow">' + conclusionTitle + '</p><div class="conclusion-list">' + distributionHtml + '</div></article></section>' + chartHtml + '<section class="module-panel results-panel"><div class="result-heading"><div><p class="eyebrow">全部真实分析明细</p><h2>已纳入全部 ' + rows.length.toLocaleString() + ' 条结果</h2><p>字段和记录均来自本模块的最新分析结果文件，可横向滚动查看。</p></div><div class="result-actions">' + filterHtml + '<span class="status-pill detail-count">' + (rows.length ? '真实数据 ' + rows.length.toLocaleString() + ' 条' : '等待数据同步') + '</span></div></div>' + tableHtml + '</section><section class="module-panel output-panel"><div><p class="eyebrow">完整结果文件</p><h2>在本地打开原始结果</h2></div><div class="output-list">' + files + '</div><p class="file-help">本文件放在 <code>06_工作台/dist</code> 目录时，结果文件链接可直接在本地打开。</p></section>';
     const pageSize = 10;
     let filteredRows = rows;
     let page = 1;
