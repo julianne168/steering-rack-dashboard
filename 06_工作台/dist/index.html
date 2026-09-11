@@ -234,9 +234,9 @@ window.WORKBENCH_SOURCE_META = {"b":"2026-09-11 11:02"};
     if (id === 'c') {
       logic.length = 0;
       logic.push(
-        '结构识别：按产品线、车型/适配范围与价格带检查活动中的 ASIN 组合；跨适配、跨定位或同一 ASIN 重复进入多个同类活动，均标记为结构冲突。',
-        '角色校验：自动与广泛活动用于探索，词组与精准活动用于承接已验证搜索词；同一搜索词、同一 ASIN 在多个活动中重复竞价或重复曝光，判定为内部竞争。',
-        '重构与复核：按保留、合并、拆出或暂停执行；拆分后落实“一类投放目标 / 一组适配 ASIN / 一套预算”，并在 7 天内复核曝光、点击、转化与 ACOS。'
+        '一个活动里混投不同车型、适配范围、产品线或价格带的 ASIN，需要拆分；每个活动只保留同一类适配对象。',
+        '同一 ASIN 同时放在多个同类型活动中，或多个活动在抢同一批搜索词和预算，需要合并或拆分，避免自己和自己竞争。',
+        '拆分后按“一个适配族群 / 一组 ASIN / 一套预算”重新建活动；7 天后再看曝光、点击、转化和 ACOS，保留效果好的结构。'
       );
     }
     let distribution = result.distribution || [];
@@ -280,7 +280,7 @@ window.WORKBENCH_SOURCE_META = {"b":"2026-09-11 11:02"};
     const filterHtml = filterValues.length ? '<label class="alert-filter">' + filterConfig.label + '<select data-detail-filter><option value="">' + filterConfig.allLabel + '</option>' + filterValues.map(value => '<option value="' + esc(value) + '">' + esc(value) + '</option>').join('') + '</select></label>' : '';
     const conclusionTitle = id === 'b' ? 'ASIN 掉量原因' : '监控结论分布';
     const chartHtml = renderCharts(id, rows);
-    const frameworkTitle = id === 'c' ? '分析框架 · 多 ASIN 活动管理标准' : '监控判断逻辑';
+    const frameworkTitle = id === 'c' ? '哪些活动需要拆分' : '监控判断逻辑';
     workspace.innerHTML = '<section class="module-banner"><div><p class="eyebrow green">广告监控视图 · ' + esc(info.scope) + '</p><h1>' + esc(info.title) + '</h1><p>' + esc(moduleHeadline) + '</p></div><div class="module-kpi"><strong>' + count + '</strong><span>' + esc(info.kpi) + '</span><small>同步：' + esc(sourceMeta[id] || data.refreshedAt || '待同步') + '</small></div></section><nav class="module-flow" aria-label="广告监控闭环">' + flow + '</nav><section class="module-layout"><article class="module-panel"><p class="eyebrow">' + frameworkTitle + '</p><ol class="logic-list">' + logic.map((item,index) => '<li><b>' + (index+1) + '</b><span>' + esc(item) + '</span></li>').join('') + '</ol></article><article class="module-panel"><p class="eyebrow">' + conclusionTitle + '</p><div class="conclusion-list">' + distributionHtml + '</div></article></section>' + chartHtml + '<section class="module-panel results-panel"><div class="result-heading"><div><p class="eyebrow">全部真实分析明细</p><h2>已纳入全部 ' + rows.length.toLocaleString() + ' 条结果</h2><p>字段和记录均来自本模块的最新分析结果文件，可横向滚动查看。</p></div><div class="result-actions">' + filterHtml + '<span class="status-pill detail-count">' + (rows.length ? '真实数据 ' + rows.length.toLocaleString() + ' 条' : '等待数据同步') + '</span></div></div>' + tableHtml + '</section><section class="module-panel output-panel"><div><p class="eyebrow">完整结果文件</p><h2>在本地打开原始结果</h2></div><div class="output-list">' + files + '</div><p class="file-help">本文件放在 <code>06_工作台/dist</code> 目录时，结果文件链接可直接在本地打开。</p></section>';
     if (id === 'b') { const axis = workspace.querySelector('[data-b-time-axis]'); const asinSelect = workspace.querySelector('[data-b-asin]'); const renderAxis = () => { axis.innerHTML = bTimeAxisHtml(asinSelect.value, rows); }; renderAxis(); asinSelect.addEventListener('change', renderAxis); }
     const pageSize = 10;
