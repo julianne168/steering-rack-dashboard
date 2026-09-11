@@ -147,7 +147,7 @@ window.WORKBENCH_SOURCE_META = {"b":"2026-09-11 11:02"};
   const setActive = id => document.querySelectorAll('.nav-link').forEach(link => link.classList.toggle('active', id ? link.getAttribute('href') === '#module-' + id : link.getAttribute('href') === '#overview'));
   const chartConfigs = {
     a:[{type:'donut',field:'预警标记',title:'预警类型构成',note:'按预警 ASIN 数量统计'},{type:'grouped-sales',field:'预警标记',periods:[['W35','上上周销售额'],['W36','上周销售额']],title:'预警类型销售额周对比',note:'按预警标记分组，对比两周销售额'}],
-    b:[{type:'donut',field:'异常因素',title:'掉量原因分布',note:'按 ASIN 归因结果统计',limit:6},{type:'line-date',field:'掉量起点',title:'掉量起点分布',note:'按首次掉量日期统计'}],
+    b:[{type:'donut',field:'原因分类',title:'归因类型构成',note:'区分直接原因、观察项与外部因素'},{type:'line-date',field:'掉量起点',title:'掉量起点分布',note:'按首次掉量日期统计'}],
     c:[{type:'donut',field:'处置动作',title:'活动处置动作构成',note:'按待处理活动统计'},{type:'bar',field:'原活动名',value:'错配花费',title:'错配花费 Top 5 活动',note:'按明细中的错配花费汇总'}],
     d:[{type:'donut',field:'可否决',title:'否词处理建议构成',note:'按否定可执行性统计'},{type:'bar',field:'原判定类型',title:'候选问题类型 Top 5',note:'按原始判定类型统计'}],
     f:[{type:'donut',field:'类型',title:'增长机会类型构成',note:'按机会词类型统计'},{type:'bar',field:'建议匹配类型',value:'销售额',title:'机会销售额按匹配方式',note:'按建议匹配方式汇总'}],
