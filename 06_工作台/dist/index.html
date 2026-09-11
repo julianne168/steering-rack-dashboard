@@ -45,6 +45,8 @@ body.module-mode .module-main{margin-right:0;max-width:none}
 .module-banner h1{color:#173c68;font-size:26px;line-height:1.22}
 .module-banner>div>p:not(.eyebrow){color:#58718b}
 .module-banner .module-kpi strong{color:#173c68}
+.chart-grouped-sales{min-height:292px}.grouped-sales-chart{margin-top:15px}.grouped-sales-legend{display:flex;gap:16px;margin:0 0 14px;color:#657581;font-size:11px}.grouped-sales-legend span{display:flex;align-items:center;gap:5px}.grouped-sales-legend i{width:10px;height:10px;border-radius:3px}.series-0{background:#8db9f0}.series-1{background:#2877dc}.sales-group{display:grid;grid-template-columns:minmax(100px,1fr) minmax(0,3fr);gap:12px;padding:10px 0;border-top:1px solid #edf1f4}.sales-group-label{align-self:center;overflow:hidden;color:#4d6272;font-size:12px;line-height:1.35;text-overflow:ellipsis}.sales-series{display:grid;gap:6px}.sales-bar-row{display:grid;grid-template-columns:28px minmax(70px,1fr) 48px;align-items:center;gap:7px}.sales-bar-row small{color:#7a8994;font-size:11px}.sales-bar-track{height:9px;overflow:hidden;border-radius:99px;background:#edf2f5}.sales-bar-track i{display:block;height:100%;border-radius:inherit}.sales-bar-row b{color:#29445e;font-size:11px;text-align:right}
+@media(max-width:760px){.sales-group{grid-template-columns:1fr;gap:6px}}
 @media(max-width:760px){.module-banner h1{font-size:22px}.module-banner{padding:20px}}
 </style></head>
 <body data-build="single-file">
@@ -141,7 +143,7 @@ window.WORKBENCH_SOURCE_META = {"b":"2026-09-11 11:02"};
   const stateClass = label => /禁止|异常|直接原因|高于|风险/.test(String(label)) ? 'risk' : /可增投|可否定|增长|正常|安全/.test(String(label)) ? 'safe' : /待|候选|关注|预警/.test(String(label)) ? 'watch' : 'neutral';
   const setActive = id => document.querySelectorAll('.nav-link').forEach(link => link.classList.toggle('active', id ? link.getAttribute('href') === '#module-' + id : link.getAttribute('href') === '#overview'));
   const chartConfigs = {
-    a:[{type:'donut',field:'预警标记',title:'预警类型构成',note:'按预警 ASIN 数量统计'},{type:'line-period',periods:[['W35','上上周销售额'],['W36','上周销售额']],title:'预警 ASIN 销售额周对比',note:'按两周销售额汇总'}],
+    a:[{type:'donut',field:'预警标记',title:'预警类型构成',note:'按预警 ASIN 数量统计'},{type:'grouped-sales',field:'预警标记',periods:[['W35','上上周销售额'],['W36','上周销售额']],title:'预警类型销售额周对比',note:'按预警标记分组，对比两周销售额'}],
     b:[{type:'donut',field:'异常因素',title:'掉量原因分布',note:'按 ASIN 归因结果统计',limit:6},{type:'line-date',field:'掉量起点',title:'掉量起点分布',note:'按首次掉量日期统计'}],
     c:[{type:'donut',field:'处置动作',title:'活动处置动作构成',note:'按待处理活动统计'},{type:'bar',field:'原活动名',value:'错配花费',title:'错配花费 Top 5 活动',note:'按明细中的错配花费汇总'}],
     d:[{type:'donut',field:'可否决',title:'否词处理建议构成',note:'按否定可执行性统计'},{type:'bar',field:'原判定类型',title:'候选问题类型 Top 5',note:'按原始判定类型统计'}],
@@ -171,6 +173,22 @@ window.WORKBENCH_SOURCE_META = {"b":"2026-09-11 11:02"};
     const bucket = new Map(); rows.forEach(row => { const date = String(row[config.field] || '').slice(0,10); if (date) bucket.set(date,(bucket.get(date) || 0) + 1); });
     return [...bucket.entries()].sort(([a],[b]) => a.localeCompare(b)).slice(-14).map(([label,value]) => ({label,value,suffix:' 项'}));
   };
+  const groupedSalesItems = (rows, config) => {
+    const buckets = new Map();
+    rows.forEach(row => {
+      const label = String(row[config.field] || '').trim();
+      if (!label || label === '未标记') return;
+      if (!buckets.has(label)) buckets.set(label, Object.fromEntries(config.periods.map(([, field]) => [field, 0])));
+      const bucket = buckets.get(label);
+      config.periods.forEach(([, field]) => { bucket[field] += numberValue(row[field]) || 0; });
+    });
+    return [...buckets.entries()].map(([label, values]) => ({label, values})).sort((a, b) => config.periods.reduce((sum, [, field]) => sum + b.values[field], 0) - config.periods.reduce((sum, [, field]) => sum + a.values[field], 0));
+  };
+  const compactAmount = value => value >= 1000 ? (value / 1000).toFixed(1) + 'k' : value.toFixed(0);
+  const groupedSalesChart = (config, items) => {
+    const max = Math.max(...items.flatMap(item => config.periods.map(([, field]) => item.values[field])), 1);
+    return '<div class="grouped-sales-chart"><div class="grouped-sales-legend">' + config.periods.map(([label], index) => '<span><i class="series-' + index + '"></i>' + label + (index === 0 ? ' 上上周' : ' 上周') + '</span>').join('') + '</div>' + items.map(item => '<div class="sales-group"><div class="sales-group-label" title="' + esc(item.label) + '">' + esc(shorter(item.label)) + '</div><div class="sales-series">' + config.periods.map(([label, field], index) => '<div class="sales-bar-row"><small>' + label + '</small><div class="sales-bar-track"><i class="series-' + index + '" style="width:' + Math.max(2, item.values[field] / max * 100).toFixed(1) + '%"></i></div><b>' + compactAmount(item.values[field]) + '</b></div>').join('') + '</div></div>').join('') + '</div>';
+  };
   const lineChart = items => {
     const width = 420, height = 166, left = 28, right = 14, top = 16, bottom = 30;
     const max = Math.max(...items.map(item => item.value), 1), min = Math.min(...items.map(item => item.value), 0), range = max - min || 1;
@@ -191,9 +209,10 @@ window.WORKBENCH_SOURCE_META = {"b":"2026-09-11 11:02"};
     return '<div class="bullet-summary"><div><span>当前 ACOS</span><strong class="' + (isSafe ? 'safe' : 'risk') + '">' + current.toFixed(2) + '%</strong></div><div><span>目标 ACOS</span><strong>' + target.toFixed(2) + '%</strong></div><div><span>盈亏平衡 ACOS</span><strong>' + benchmark.toFixed(2) + '%</strong></div></div><div class="bullet-chart" role="img" aria-label="当前 ACOS ' + current.toFixed(2) + '%，目标 ACOS ' + target.toFixed(2) + '%，盈亏平衡 ACOS ' + benchmark.toFixed(2) + '%"><div class="bullet-scale"><span>0%</span><span>' + (ceiling / 2).toFixed(1) + '%</span><span>' + ceiling.toFixed(1) + '%</span></div><div class="bullet-track"><i class="bullet-safe-zone" style="width:' + targetPosition.toFixed(2) + '%"></i><i class="bullet-current ' + (isSafe ? 'safe' : 'risk') + '" style="width:' + currentWidth.toFixed(2) + '%"></i><b class="bullet-target" style="left:' + targetPosition.toFixed(2) + '%"><em>目标线</em></b><b class="bullet-benchmark" style="left:' + benchmarkPosition.toFixed(2) + '%"><em>盈亏平衡线</em></b></div><div class="bullet-legend"><span><i class="current ' + (isSafe ? 'safe' : 'risk') + '"></i>当前 ACOS</span><span><i class="target"></i>目标 ACOS</span><span><i class="benchmark"></i>盈亏平衡 ACOS</span></div></div>';
   };
   const chartCard = (config, rows) => {
-    const items = config.type === 'bullet' ? [] : (config.type.startsWith('line-') ? lineItems(rows, config) : groupedItems(rows, config)); if (config.type !== 'bullet' && !items.length) return '<article class="chart-card"><p class="eyebrow">' + esc(config.title) + '</p><p class="chart-note">暂无可用图表数据</p></article>';
+    const items = config.type === 'bullet' ? [] : (config.type === 'grouped-sales' ? groupedSalesItems(rows, config) : (config.type.startsWith('line-') ? lineItems(rows, config) : groupedItems(rows, config))); if (config.type !== 'bullet' && !items.length) return '<article class="chart-card"><p class="eyebrow">' + esc(config.title) + '</p><p class="chart-note">暂无可用图表数据</p></article>';
     const header = '<div class="chart-heading"><div><p class="eyebrow">' + esc(config.title) + '</p><small>' + esc(config.note) + '</small></div></div>';
     if (config.type.startsWith('line-')) return '<article class="chart-card chart-line">' + header + lineChart(items) + '</article>';
+    if (config.type === 'grouped-sales') return '<article class="chart-card chart-grouped-sales">' + header + groupedSalesChart(config, items) + '</article>';
     if (config.type === 'bullet') return '<article class="chart-card chart-bullet">' + header + bulletChart(config, rows) + '</article>';
     const max = Math.max(...items.map(item => item.value), 1);
     if (config.type === 'donut') { const total = items.reduce((sum,item) => sum + item.value,0); let offset = 0; const slices = items.map((item,index) => { const end = offset + item.value / total * 100; const slice = chartColors[index % chartColors.length] + ' ' + offset.toFixed(2) + '% ' + end.toFixed(2) + '%'; offset = end; return slice; }).join(','); return '<article class="chart-card chart-donut">' + header + '<div class="donut-layout"><div class="donut" style="background:conic-gradient(' + slices + ')"><div><strong>' + total.toLocaleString() + '</strong><span>合计</span></div></div><div class="donut-legend">' + items.map((item,index) => '<div><i style="background:' + chartColors[index % chartColors.length] + '"></i><span title="' + esc(item.label) + '">' + esc(shorter(item.label)) + '</span><b>' + formatChartValue(item) + '</b></div>').join('') + '</div></div></article>'; }
