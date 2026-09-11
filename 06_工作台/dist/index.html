@@ -132,14 +132,14 @@ window.WORKBENCH_SOURCE_META = {"b":"2026-09-11 11:02"};
   const setActive = id => document.querySelectorAll('.nav-link').forEach(link => link.classList.toggle('active', id ? link.getAttribute('href') === '#module-' + id : link.getAttribute('href') === '#overview'));
   const chartConfigs = {
     a:[{type:'donut',field:'预警标记',title:'预警类型构成',note:'按预警 ASIN 数量统计'},{type:'line-period',periods:[['W35','上上周销售额'],['W36','上周销售额']],title:'预警 ASIN 销售额周对比',note:'按两周销售额汇总'}],
-    b:[{type:'donut',field:'异常因素',title:'掉量原因分布',note:'按 ASIN 归因结果统计'},{type:'line-date',field:'掉量起点',title:'掉量起点分布',note:'按首次掉量日期统计'}],
+    b:[{type:'donut',field:'异常因素',title:'掉量原因分布',note:'按 ASIN 归因结果统计',limit:6},{type:'line-date',field:'掉量起点',title:'掉量起点分布',note:'按首次掉量日期统计'}],
     c:[{type:'donut',field:'处置动作',title:'活动处置动作构成',note:'按待处理活动统计'},{type:'bar',field:'原活动名',value:'错配花费',title:'错配花费 Top 5 活动',note:'按明细中的错配花费汇总'}],
     d:[{type:'donut',field:'可否决',title:'否词处理建议构成',note:'按否定可执行性统计'},{type:'bar',field:'原判定类型',title:'候选问题类型 Top 5',note:'按原始判定类型统计'}],
     f:[{type:'donut',field:'类型',title:'增长机会类型构成',note:'按机会词类型统计'},{type:'bar',field:'建议匹配类型',value:'销售额',title:'机会销售额按匹配方式',note:'按建议匹配方式汇总'}],
     g:[{type:'donut',field:'状态',title:'利润状态分布',note:'按 ASIN 当前利润状态统计'},{type:'bar',fields:['当前ACOS%','目标ACOS%','平衡ACOS%'],title:'整体 ACOS 水平',note:'所有纳入 ASIN 的平均值'}]
   };
   const numberValue = value => { const parsed = Number(String(value ?? '').replace(/[^0-9.-]/g, '')); return Number.isFinite(parsed) ? parsed : null; };
-  const chartColors = ['#2877dc','#20ad69','#efa527','#c576dd','#e96d6a'];
+  const chartColors = ['#2877dc','#20ad69','#efa527','#c576dd','#e96d6a','#7b9dbd'];
   const groupedItems = (rows, config) => {
     const bucket = new Map();
     if (config.fields) {
@@ -153,7 +153,7 @@ window.WORKBENCH_SOURCE_META = {"b":"2026-09-11 11:02"};
       const value = config.value ? numberValue(row[config.value]) : 1;
       if (value !== null) bucket.set(label, (bucket.get(label) || 0) + value);
     });
-    return [...bucket.entries()].map(([label,value]) => ({label,value,suffix:config.value ? '' : ' 项'})).sort((a,b) => b.value - a.value).slice(0,5);
+    return [...bucket.entries()].map(([label,value]) => ({label,value,suffix:config.value ? '' : ' 项'})).sort((a,b) => b.value - a.value).slice(0, config.limit ?? 5);
   };
   const formatChartValue = item => item.suffix === '%' ? item.value.toFixed(2) + '%' : item.suffix ? Math.round(item.value).toLocaleString() + item.suffix : item.value.toLocaleString(undefined,{maximumFractionDigits:2});
   const lineItems = (rows, config) => {
