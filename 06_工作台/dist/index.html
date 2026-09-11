@@ -34,6 +34,7 @@ body.module-mode .module-main{margin-right:0;max-width:none}
 .bullet-target{position:absolute;top:-7px;bottom:-7px;width:3px;border-radius:3px;background:#2877dc;transform:translateX(-1px)}.bullet-target em{position:absolute;bottom:30px;left:50%;padding:3px 6px;border-radius:5px;background:#eaf3ff;color:#2469bd;font-size:10px;font-style:normal;font-weight:700;transform:translateX(-50%);white-space:nowrap}.bullet-legend i.target{width:3px;height:13px;background:#2877dc}
 .b-top-layout{grid-template-columns:1fr}.b-analysis-charts .chart-card{min-height:314px}.b-analysis-charts .sankey-card{grid-column:1/-1}.sankey-wrap{margin-top:13px;overflow:hidden}.sankey-wrap svg{display:block;width:100%;height:255px}.sankey-flow{fill:none;stroke-linecap:round;opacity:.32}.sankey-node text{fill:#fff;font-size:10px;font-weight:700}.sankey-node .sankey-value{font-size:9px;font-weight:500;opacity:.88}.chart-filter{display:flex;align-items:center;gap:6px;color:#71808b;font-size:11px;white-space:nowrap}.chart-filter select{max-width:132px;border:1px solid #dce5ec;border-radius:7px;background:#fff;padding:6px 22px 6px 7px;color:#40515e;font:12px inherit}.time-axis-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin-top:15px}.time-axis-summary span{min-width:0;padding:7px 8px;border:1px solid #e7eef2;border-radius:8px;color:#5c6e7c;font-size:11px}.time-axis-summary b{display:block;margin-bottom:2px;color:#8a98a3;font-size:10px}.time-axis-legend{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:11px;color:#657581;font-size:11px}.time-axis-legend i{display:inline-block;width:17px;height:3px;border-radius:5px}.time-axis-legend .daily{background:#2877dc}.time-axis-legend .average{background:#20ad69;border-top:1px dashed #20ad69}.time-axis-legend .threshold{background:#efa527;border-top:1px dashed #efa527}.time-axis svg{display:block;width:100%;height:196px;margin-top:2px;overflow:visible}.axis-grid{stroke:#e6eef2;stroke-width:1}.daily-path{fill:none;stroke:#2877dc;stroke-width:2.6;stroke-linejoin:round}.average-path{fill:none;stroke:#20ad69;stroke-width:1.8;stroke-dasharray:5 4}.threshold-path{fill:none;stroke:#efa527;stroke-width:1.8;stroke-dasharray:5 4}.time-axis circle{fill:#fff;stroke:#2877dc;stroke-width:1.8}.drop-marker{stroke:#2877dc;stroke-width:1.4;stroke-dasharray:4 4}.event-marker{stroke:#c576dd;stroke-width:1.4;stroke-dasharray:3 4}.drop-text{fill:#2877dc;font-size:10px;font-weight:700}.event-text{fill:#a25fbd;font-size:10px;font-weight:700}.axis-label{fill:#7c8b96;font-size:10px}.time-axis-note{margin:4px 0 0!important;color:#7d8b95!important;font-size:11px!important}
 .result-actions{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap}.alert-filter{display:flex;align-items:center;gap:7px;color:#657581;font-size:12px;font-weight:700}.alert-filter select{max-width:260px;border:1px solid #dce5ec;border-radius:8px;background:#fff;padding:7px 28px 7px 9px;color:#40515e;font:12px inherit;cursor:pointer}
+.negative-detail-groups{display:grid;gap:20px;margin-top:18px}.negative-detail-block{padding:16px;border:1px solid #e1e9ef;border-radius:12px;background:#fbfdff}.negative-detail-block:first-child{border-color:#f0dbb6;background:#fffcf6}.negative-detail-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}.negative-detail-heading h3{margin:0;color:#24435e;font-size:15px}.negative-detail-heading p{margin:4px 0 0;color:#74838f;font-size:12px}.negative-detail-heading .status-pill{flex:0 0 auto}
 .table-pagination{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;color:#73808a;font-size:12px}.table-pagination div{display:flex;gap:7px}.table-pagination button{border:1px solid #dce5ec;border-radius:8px;background:#fff;padding:6px 10px;color:#3b82f6;font:600 12px inherit;cursor:pointer}.table-pagination button:hover:not(:disabled){border-color:#9dc5ff;background:#eef5ff}.table-pagination button:disabled{cursor:not-allowed;color:#b2bbc4;background:#f7f9fb}@media(max-width:560px){.table-pagination{align-items:flex-start;flex-direction:column}.table-pagination div{width:100%;justify-content:space-between}.table-pagination button{padding:6px 8px}}
 @media(max-width:960px){body.module-mode .module-main{margin-right:0}.center{margin-right:0}}
 @media(min-width:701px) and (max-width:1400px){.global-header{margin-left:228px}.left-nav{width:210px}.center{margin-left:210px;margin-right:290px}.right-rail{top:94px}}
@@ -396,9 +397,15 @@ window.WORKBENCH_SOURCE_META = {"b":"2026-09-11 11:02"};
     const distributionHtml = id === 'b'
       ? bCauseDistribution(distribution)
       : (actionableDistribution.length ? actionableDistribution.map(item => '<div class="conclusion-chip ' + stateClass(item.label) + '"><span>' + esc(item.label) + '</span><strong>' + Number(item.value || 0).toLocaleString() + '</strong></div>').join('') : '<p class="empty-note">当前没有需要处理的监控结论。</p>');
-    const tableHtml = displayColumns.length && rows.length ? '<div class="full-result-table"></div>' : '<div class="empty-note">暂无真实分析明细。运行本模块分析并刷新工作台数据后将自动显示。</div>';
+    const removeNegativeRows = id === 'd' ? rows.filter(row => String(row['处理动作'] || '').trim() === '从否词清单移除') : [];
+    const addNegativeRows = id === 'd' ? rows.filter(row => String(row['处理动作'] || '').trim() !== '从否词清单移除') : [];
+    const tableHtml = displayColumns.length && rows.length
+      ? (id === 'd'
+        ? '<div class="negative-detail-groups"><section class="negative-detail-block"><div class="negative-detail-heading"><div><h3>从否词清单移除</h3><p>恢复被误否的搜索词；不新增否词。</p></div><span class="status-pill">真实数据 ' + removeNegativeRows.length.toLocaleString() + ' 条</span></div><div class="full-result-table" data-detail-group="remove"></div></section><section class="negative-detail-block"><div class="negative-detail-heading"><div><h3>不适配搜索词 · 新增否词</h3><p>按活动级 L2 或 ASIN 广告组 L3 执行否定。</p></div><span class="status-pill">真实数据 ' + addNegativeRows.length.toLocaleString() + ' 条</span></div><div class="full-result-table" data-detail-group="add"></div></section></div>'
+        : '<div class="full-result-table"></div>')
+      : '<div class="empty-note">暂无真实分析明细。运行本模块分析并刷新工作台数据后将自动显示。</div>';
     const files = info.files.map(([label, href]) => '<a class="output" href="' + href + '"><strong>打开' + esc(label) + ' <span>↗</span></strong><small>本地结果文件 · 以最新分析结果为准</small></a>').join('');
-    const filterConfig = id === 'a' ? {field:'预警标记', label:'预警标记', allLabel:'全部预警'} : id === 'b' ? {field:'异常因素', label:'异常因素', allLabel:'全部原因'} : id === 'd' ? {field:'处理动作', label:'处理动作', allLabel:'全部动作'} : null;
+    const filterConfig = id === 'a' ? {field:'预警标记', label:'预警标记', allLabel:'全部预警'} : id === 'b' ? {field:'异常因素', label:'异常因素', allLabel:'全部原因'} : null;
     const filterValues = filterConfig ? [...new Set(rows.map(row => String(row[filterConfig.field] || '').trim()).filter(Boolean))].sort() : [];
     const filterHtml = filterValues.length ? '<label class="alert-filter">' + filterConfig.label + '<select data-detail-filter><option value="">' + filterConfig.allLabel + '</option>' + filterValues.map(value => '<option value="' + esc(value) + '">' + esc(value) + '</option>').join('') + '</select></label>' : '';
     const conclusionTitle = id === 'b' ? 'ASIN 掉量原因' : '监控结论分布';
@@ -412,25 +419,38 @@ window.WORKBENCH_SOURCE_META = {"b":"2026-09-11 11:02"};
     workspace.innerHTML = '<section class="module-banner"><div><p class="eyebrow green">广告监控视图 · ' + esc(info.scope) + '</p><h1>' + esc(info.title) + '</h1><p>' + esc(moduleHeadline) + '</p></div><div class="module-kpi"><strong>' + count + '</strong><span>' + esc(info.kpi) + '</span><small>同步：' + esc(sourceMeta[id] || data.refreshedAt || '待同步') + '</small></div></section><nav class="module-flow" aria-label="广告监控闭环">' + flow + '</nav>' + modulePanelsHtml + kpiHtml + chartHtml + '<section class="module-panel results-panel"><div class="result-heading"><div><p class="eyebrow">全部真实分析明细</p><h2>已纳入全部 ' + rows.length.toLocaleString() + ' 条结果</h2><p>字段和记录均来自本模块的最新分析结果文件，可横向滚动查看。</p></div><div class="result-actions">' + filterHtml + '<span class="status-pill detail-count">' + (rows.length ? '真实数据 ' + rows.length.toLocaleString() + ' 条' : '等待数据同步') + '</span></div></div>' + tableHtml + '</section><section class="module-panel output-panel"><div><p class="eyebrow">完整结果文件</p><h2>在本地打开原始结果</h2></div><div class="output-list">' + files + '</div><p class="file-help">本文件放在 <code>06_工作台/dist</code> 目录时，结果文件链接可直接在本地打开。</p></section>';
     if (id === 'b') { const axis = workspace.querySelector('[data-b-time-axis]'); const asinSelect = workspace.querySelector('[data-b-asin]'); const renderAxis = () => { axis.innerHTML = bTimeAxisHtml(asinSelect.value, rows); }; renderAxis(); asinSelect.addEventListener('change', renderAxis); }
     const pageSize = 10;
-    let filteredRows = rows;
-    let page = 1;
-    const renderDetailPage = () => {
-      const pageCount = Math.max(1, Math.ceil(filteredRows.length / pageSize));
+    const renderTablePage = (container, tableRows, page, onPageChange) => {
+      const pageCount = Math.max(1, Math.ceil(tableRows.length / pageSize));
       const start = (page - 1) * pageSize;
-      const currentRows = filteredRows.slice(start, start + pageSize);
+      const currentRows = tableRows.slice(start, start + pageSize);
       const table = '<div class="result-table-wrap"><table class="result-table"><thead><tr>' + displayColumns.map(column => '<th>' + esc(column[0]) + '</th>').join('') + '</tr></thead><tbody>' + currentRows.map(row => '<tr>' + displayColumns.map(column => { const value = displayCell(column[1], row[column[1]]); return '<td title="' + esc(value) + '">' + esc(shorter(value)) + '</td>'; }).join('') + '</tr>').join('') + '</tbody></table></div>';
-      const controls = '<nav class="table-pagination" aria-label="分析明细分页"><span>第 ' + page + ' / ' + pageCount + ' 页 · 显示第 ' + (filteredRows.length ? start + 1 : 0) + '–' + Math.min(start + pageSize, filteredRows.length) + ' 条</span><div><button type="button" data-page="first" ' + (page === 1 ? 'disabled' : '') + '>首页</button><button type="button" data-page="prev" ' + (page === 1 ? 'disabled' : '') + '>上一页</button><button type="button" data-page="next" ' + (page === pageCount ? 'disabled' : '') + '>下一页</button><button type="button" data-page="last" ' + (page === pageCount ? 'disabled' : '') + '>末页</button></div></nav>';
-      const container = workspace.querySelector('.full-result-table');
+      const controls = '<nav class="table-pagination" aria-label="分析明细分页"><span>第 ' + page + ' / ' + pageCount + ' 页 · 显示第 ' + (tableRows.length ? start + 1 : 0) + '–' + Math.min(start + pageSize, tableRows.length) + ' 条</span><div><button type="button" data-page="first" ' + (page === 1 ? 'disabled' : '') + '>首页</button><button type="button" data-page="prev" ' + (page === 1 ? 'disabled' : '') + '>上一页</button><button type="button" data-page="next" ' + (page === pageCount ? 'disabled' : '') + '>下一页</button><button type="button" data-page="last" ' + (page === pageCount ? 'disabled' : '') + '>末页</button></div></nav>';
       container.innerHTML = table + controls;
-      workspace.querySelector('.detail-count').textContent = '真实数据 ' + filteredRows.length.toLocaleString() + ' 条';
       container.querySelectorAll('[data-page]').forEach(button => button.addEventListener('click', () => {
         const action = button.dataset.page;
-        page = action === 'first' ? 1 : action === 'prev' ? Math.max(1, page - 1) : action === 'next' ? Math.min(pageCount, page + 1) : pageCount;
-        renderDetailPage();
+        onPageChange(action === 'first' ? 1 : action === 'prev' ? Math.max(1, page - 1) : action === 'next' ? Math.min(pageCount, page + 1) : pageCount);
       }));
     };
-    if (displayColumns.length && rows.length) renderDetailPage();
-    workspace.querySelector('[data-detail-filter]')?.addEventListener('change', event => { filteredRows = event.currentTarget.value ? rows.filter(row => String(row[filterConfig.field] || '').trim() === event.currentTarget.value) : rows; page = 1; renderDetailPage(); });
+    if (displayColumns.length && rows.length && id === 'd') {
+      const renderNegativeGroup = (group, groupRows) => {
+        let groupPage = 1;
+        const container = workspace.querySelector('[data-detail-group="' + group + '"]');
+        const render = () => renderTablePage(container, groupRows, groupPage, nextPage => { groupPage = nextPage; render(); });
+        render();
+      };
+      renderNegativeGroup('remove', removeNegativeRows);
+      renderNegativeGroup('add', addNegativeRows);
+    } else if (displayColumns.length && rows.length) {
+      let filteredRows = rows;
+      let page = 1;
+      const renderDetailPage = () => {
+        const container = workspace.querySelector('.full-result-table');
+        renderTablePage(container, filteredRows, page, nextPage => { page = nextPage; renderDetailPage(); });
+        workspace.querySelector('.detail-count').textContent = '真实数据 ' + filteredRows.length.toLocaleString() + ' 条';
+      };
+      renderDetailPage();
+      workspace.querySelector('[data-detail-filter]')?.addEventListener('change', event => { filteredRows = event.currentTarget.value ? rows.filter(row => String(row[filterConfig.field] || '').trim() === event.currentTarget.value) : rows; page = 1; renderDetailPage(); });
+    }
     document.body.classList.add('module-mode'); home.hidden = true; moduleView.hidden = false; setActive(id); document.title = info.title + ' · 转向器驾驶舱'; window.scrollTo(0,0);
   }
   function route() {
