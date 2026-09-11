@@ -53,6 +53,9 @@ body.module-mode .module-main{margin-right:0;max-width:none}
 @media(max-width:760px){.sales-group{grid-template-columns:1fr;gap:6px}}
 @media(max-width:760px){.module-a-kpis{padding:16px}.module-a-kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.module-a-kpi{padding:12px}.module-a-kpi strong{font-size:19px}}
 @media(max-width:760px){.module-banner h1{font-size:22px}.module-banner{padding:20px}}
+.execution-loop-panel{border-color:#cfe0f5;background:linear-gradient(135deg,#fff 0%,#f8fbff 100%)}.execution-source{background:#fff3df;color:#a86d10}.execution-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:17px}.execution-stage{display:flex;gap:10px;min-height:168px;padding:14px;border:1px solid #e4ebf1;border-radius:11px;background:#fff}.execution-stage>span{display:grid;flex:0 0 auto;place-items:center;width:24px;height:24px;border-radius:50%;background:#eaf3ff;color:#2877dc;font-size:12px;font-weight:800}.execution-stage>div{min-width:0}.execution-stage small{display:block;color:#718292;font-size:11px}.execution-stage strong{display:block;margin:4px 0 6px;color:#203c56;font-size:14px}.execution-stage p{margin:0;color:#657784;font-size:12px;line-height:1.55}.execution-stage b{display:block;margin:8px 0 5px;color:#1c5eaa;font-size:22px;line-height:1}.execution-stage a{display:inline-block;margin-top:8px;color:#2877dc;font-size:12px;font-weight:700;text-decoration:none}.execution-stage.complete{border-color:#ccebdc}.execution-stage.complete>span{background:#e5f8ec;color:#168154}.execution-stage.pending{border-color:#cde0f9}.execution-stage.locked{border-color:#f3dfbd;background:#fffcf7}.execution-stage.locked>span{background:#fff1d8;color:#a97219}.execution-stage.review{border-color:#d7e6f2}.permission-actions{display:flex;gap:6px;margin-top:9px}.permission-actions button{border:1px solid #dbe2e8;border-radius:7px;background:#f4f6f8;color:#9aa7b1;padding:5px 7px;font:600 11px inherit;cursor:not-allowed}.execution-footnote{margin:14px 0 0;padding-top:12px;border-top:1px dashed #d9e5ef;color:#71818e;font-size:12px}.queue-table .tr{grid-template-columns:72px minmax(118px,1.05fr) minmax(135px,1.18fr) minmax(145px,1.18fr) minmax(108px,.78fr) 94px}.execution-controls{display:flex;justify-content:flex-end}.execution-button{border:1px solid #b9d6fa;border-radius:7px;background:#eff6ff;color:#246fc8;padding:6px 8px;font:700 11px inherit;cursor:pointer;white-space:nowrap}.execution-button:hover{border-color:#72abec;background:#e4f0ff}.execution-wait{padding:6px 8px;border-radius:7px;background:#e8f8ee;color:#188257;font-size:11px;font-weight:700;white-space:nowrap}
+@media(max-width:1200px){.execution-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.execution-stage{min-height:142px}.queue-table .tr{min-width:820px}}
+@media(max-width:620px){.execution-grid{grid-template-columns:1fr}.execution-stage{min-height:auto}.execution-footnote{line-height:1.55}.queue-table .tr{min-width:820px}}
 </style></head>
 <body data-build="single-file">
   <header class="global-header">
@@ -83,7 +86,7 @@ body.module-mode .module-main{margin-right:0;max-width:none}
       <article><span>利润安全的增投空间</span><strong>504</strong><small class="green">基于 2026-08 成本</small></article>
     </section>
     <section class="panel flow-panel">
-      <div class="panel-title"><div><span class="icon">◈</span><strong>广告监控闭环</strong><small>从风险信号到干预效果的连续监控</small></div><span class="source">数据已加载</span></div>
+      <div class="panel-title"><div><span class="icon">◈</span><strong>广告监控闭环</strong><small>从数据监控、归因分析到执行动作与效果复核</small></div><span class="source">数据已加载</span></div>
       <div class="workflow"><a href="#module-a"><b>1</b><span>模块 A</span><strong>发现预警</strong><small>163 个 ASIN</small></a><i>→</i><a href="#module-b"><b>2</b><span>模块 B</span><strong>定位原因</strong><small>152 条结论</small></a><i>→</i><a href="#module-g"><b>3</b><span>模块 G</span><strong>利润准入</strong><small>504 可增投</small></a><i>→</i><div><b>4</b><span>C / D / E / F</span><strong>形成处置</strong><small>1,447 待确认</small></div><i>→</i><div><b>5</b><span>7 天</span><strong>效果复核</strong><small>回到 A / B</small></div></div>
     </section>
     <section class="two-col">
@@ -96,8 +99,19 @@ body.module-mode .module-main{margin-right:0;max-width:none}
         <ol><li><span class="tag p0">P0</span><div><strong>修复直接经营异常</strong><small>链接、购物车、库存、涨价</small></div><b>154</b></li><li><span class="tag p1">P1</span><div><strong>广告结构与无效流量治理</strong><small>活动重构、否词校验</small></div><b>1,028</b></li><li><span class="tag p2">P2</span><div><strong>利润线内增长测试</strong><small>潜力词、拆出增投</small></div><b>419</b></li></ol>
       </article>
     </section>
+    
+    <section class="panel execution-loop-panel" id="execution">
+      <div class="panel-title"><div><span class="icon">◎</span><strong>执行与复核控制台</strong><small>每一条建议都要完成：确认 → 执行 → 7 天复核 → 关闭</small></div><span class="source execution-source">广告账户权限待接入</span></div>
+      <div class="execution-grid">
+        <article class="execution-stage complete"><span>1</span><div><small>数据监控</small><strong>发现并完成归因</strong><p>预警、原因与利润准入已形成分析依据。</p></div></article>
+        <article class="execution-stage pending"><span>2</span><div><small>运营确认</small><strong>待确认行动</strong><b data-execution-total>1,447</b><a href="#queue">进入行动队列 →</a></div></article>
+        <article class="execution-stage locked"><span>3</span><div><small>广告后台执行</small><strong>执行操作</strong><p>批量暂停、创建规则等操作将在权限接入后启用。</p><div class="permission-actions"><button disabled title="待接入广告账户权限">批量暂停</button><button disabled title="待接入广告账户权限">创建规则</button></div></div></article>
+        <article class="execution-stage review"><span>4</span><div><small>效果复核</small><strong>7 天复核与关闭</strong><p>登记执行后，回到预警与归因数据判断是否改善。</p><a href="#review">查看复核规则 →</a></div></article>
+      </div>
+      <p class="execution-footnote">当前版本可在本机记录“确认执行”和“已执行”；接入广告账户权限与协同数据源后，执行动作和状态将自动同步给团队。</p>
+    </section>
     <section class="panel queue" id="queue">
-      <div class="panel-title"><div><span class="icon">☑</span><strong>统一行动队列</strong><small>点击模块可进入结果与处理工作区</small></div><div class="filters"><button class="active" data-filter="all">全部</button><button data-filter="p0">P0 直接原因</button><button data-filter="p1">P1 治理</button><button data-filter="p2">P2 测试</button></div></div>
+      <div class="panel-title"><div><span class="icon">☑</span><strong>统一行动队列</strong><small>先确认责任与动作，再登记执行并进入 7 天复核</small></div><div class="filters"><button class="active" data-filter="all">全部</button><button data-filter="p0">P0 直接原因</button><button data-filter="p1">P1 治理</button><button data-filter="p2">P2 测试</button></div></div>
       <div class="queue-table"><div class="tr th"><span>优先级</span><span>ASIN / 对象</span><span>问题 / 机会</span><span>建议动作</span><span>状态</span></div><div class="tr" data-priority="p0"><span><b class="tag p0">P0</b></span><span><strong>B0CBS97JLD</strong><small>模块 B</small></span><span>库存异常<br><small>THIRD_PARTY 可售 = 2</small></span><span>补货并核对各仓可售库存</span><span class="status amber">待运营确认</span></div><div class="tr" data-priority="p0"><span><b class="tag p0">P0</b></span><span><strong>B0CD241Q7W</strong><small>模块 B</small></span><span>购物车异常<br><small>SMC 无购物车标签</small></span><span>排查 Buy Box、价格与配送</span><span class="status amber">待运营确认</span></div><div class="tr" data-priority="p1"><span><b class="tag p1">P1</b></span><span><strong>SP-AUTO-MIX…</strong><small>模块 C</small></span><span>多 ASIN 适配冲突<br><small>高冲突词 41</small></span><span>按适配族群拆出重建</span><span class="status blue">待运营确认</span></div><div class="tr" data-priority="p2"><span><b class="tag p2">P2</b></span><span><strong>2005 ford f150…</strong><small>模块 F</small></span><span>机会词<br><small>2 单 / $360.98</small></span><span>目标 ACOS 内精准测试</span><span class="status green">待运营确认</span></div></div>
     </section>
     <section class="data-status" id="data"><span id="review">7 天复核</span><strong>回到模块 A / B 复核单量、销售额、TACOS 与直接异常是否改善</strong><strong>模块 A：W36 vs W35</strong><strong>模块 B：21 天窗口</strong><strong>模块 G：2026-08 成本</strong><small>原数据与结果文件保存在资料包中，可从各模块工作区打开。</small></section>
@@ -415,8 +429,49 @@ window.WORKBENCH_SOURCE_META = {"b":"2026-09-11 11:02"};
   window.addEventListener('hashchange', route);
   document.querySelector('#jumpQueue')?.addEventListener('click', () => setHome('#queue'));
   document.querySelectorAll('.filters button').forEach(button => button.addEventListener('click', () => { document.querySelectorAll('.filters button').forEach(item => item.classList.remove('active')); button.classList.add('active'); const filter = button.dataset.filter; document.querySelectorAll('.queue-table .tr:not(.th)').forEach(row => row.hidden = filter !== 'all' && row.dataset.priority !== filter); }));
+  // 这是一个可交接的本机执行台：只保存确认/执行登记，不会伪装成已向广告平台下达指令。
+  const executionStorageKey = 'steering-rack-execution-v1';
+  let executionState = {};
+  try { executionState = JSON.parse(localStorage.getItem(executionStorageKey) || '{}'); } catch (_) { executionState = {}; }
+  const saveExecutionState = () => localStorage.setItem(executionStorageKey, JSON.stringify(executionState));
+  const executionRows = [...document.querySelectorAll('.queue-table .tr:not(.th)')];
+  const renderExecutionState = row => {
+    const key = row.dataset.executionKey;
+    const state = executionState[key] || 'pending';
+    const status = row.querySelector('.status');
+    const controls = row.querySelector('.execution-controls');
+    if (!status || !controls) return;
+    if (state === 'confirmed') {
+      status.className = 'status blue';
+      status.textContent = '已确认 · 待执行';
+      controls.innerHTML = '<button class="execution-button" data-execution-action="done" data-execution-key="' + esc(key) + '">登记已执行</button>';
+    } else if (state === 'review') {
+      status.className = 'status green';
+      status.textContent = '已执行 · 7 天复核中';
+      controls.innerHTML = '<span class="execution-wait">等待复核</span>';
+    } else {
+      status.className = 'status amber';
+      status.textContent = '待运营确认';
+      controls.innerHTML = '<button class="execution-button" data-execution-action="confirm" data-execution-key="' + esc(key) + '">确认执行</button>';
+    }
+  };
+  executionRows.forEach((row, index) => {
+    const object = row.querySelector('strong')?.textContent.trim() || ('任务' + (index + 1));
+    row.dataset.executionKey = object + '-' + index;
+    row.insertAdjacentHTML('beforeend', '<span class="execution-controls"></span>');
+    renderExecutionState(row);
+  });
+  document.addEventListener('click', event => {
+    const control = event.target.closest('[data-execution-action]');
+    if (!control) return;
+    const key = control.dataset.executionKey;
+    executionState[key] = control.dataset.executionAction === 'confirm' ? 'confirmed' : 'review';
+    saveExecutionState();
+    const row = executionRows.find(item => item.dataset.executionKey === key);
+    if (row) renderExecutionState(row);
+  });
   let percent = false; document.querySelector('#toggleBars')?.addEventListener('click', event => { percent = !percent; const m = data.metrics || {}; const counts = [m.causeRows || 0,m.campaignActions || 0,m.negativeCandidates || 0,m.opportunities || 0]; const max = Math.max(...counts,1); const values = percent ? counts.map(value => (value / max * 100).toFixed(0) + '%') : counts.map(value => value.toLocaleString()); document.querySelectorAll('.bar-chart strong').forEach((node,index) => node.textContent = values[index]); event.currentTarget.textContent = percent ? '切换为数量' : '切换为占比'; });
-  if (data.metrics) { const m = data.metrics; if (fullData.a?.rows?.length) m.alertAsins = fullData.a.rows.length; if (fullData.b?.rows?.length) m.causeRows = fullData.b.rows.length; document.querySelectorAll('.nav-link[href="#module-a"] b').forEach(node => node.textContent = Number(m.alertAsins || 0).toLocaleString()); document.querySelectorAll('.nav-link[href="#module-b"] b').forEach(node => node.textContent = Number(m.causeRows || 0).toLocaleString()); document.querySelectorAll('.summary-grid strong').forEach((node,index) => node.textContent = [m.alertAsins,m.causeRows,m.actionTotal,m.investableAsins][index]?.toLocaleString() || '—'); document.querySelectorAll('.goal-card strong').forEach((node,index) => node.textContent = [m.alertAsins,m.causeRows,m.investableAsins,m.negativeCandidates][index]?.toLocaleString() || '—'); document.querySelectorAll('.bar-chart strong').forEach((node,index) => node.textContent = [m.causeRows,m.campaignActions,m.negativeCandidates,m.opportunities][index]?.toLocaleString() || '—'); const workflowLinks = document.querySelectorAll('.workflow > a'); if (workflowLinks[0]) workflowLinks[0].querySelector('small').textContent = m.alertAsins.toLocaleString() + ' 个 ASIN'; if (workflowLinks[1]) workflowLinks[1].querySelector('small').textContent = m.causeRows.toLocaleString() + ' 条结论'; const rate = m.monitoredAsins ? (m.alertAsins/m.monitoredAsins*100).toFixed(1) : '—'; const summaryNote=document.querySelector('.summary-grid article:nth-child(1) small'); if(summaryNote) summaryNote.textContent=rate + '% 进入预警'; const status=document.querySelector('.data-status small'); if(status) status.textContent='最近分析结果：' + (sourceMeta.b || data.latestResultAt || '待同步') + '；工作台同步：' + (data.refreshedAt || '待同步'); }
+  if (data.metrics) { const m = data.metrics; if (fullData.a?.rows?.length) m.alertAsins = fullData.a.rows.length; if (fullData.b?.rows?.length) m.causeRows = fullData.b.rows.length; document.querySelectorAll('.nav-link[href="#module-a"] b').forEach(node => node.textContent = Number(m.alertAsins || 0).toLocaleString()); document.querySelectorAll('.nav-link[href="#module-b"] b').forEach(node => node.textContent = Number(m.causeRows || 0).toLocaleString()); document.querySelectorAll('.summary-grid strong').forEach((node,index) => node.textContent = [m.alertAsins,m.causeRows,m.actionTotal,m.investableAsins][index]?.toLocaleString() || '—'); document.querySelectorAll('.goal-card strong').forEach((node,index) => node.textContent = [m.alertAsins,m.causeRows,m.investableAsins,m.negativeCandidates][index]?.toLocaleString() || '—'); document.querySelectorAll('.bar-chart strong').forEach((node,index) => node.textContent = [m.causeRows,m.campaignActions,m.negativeCandidates,m.opportunities][index]?.toLocaleString() || '—'); document.querySelectorAll('[data-execution-total]').forEach(node => node.textContent = Number(m.actionTotal || 0).toLocaleString()); const workflowLinks = document.querySelectorAll('.workflow > a'); if (workflowLinks[0]) workflowLinks[0].querySelector('small').textContent = m.alertAsins.toLocaleString() + ' 个 ASIN'; if (workflowLinks[1]) workflowLinks[1].querySelector('small').textContent = m.causeRows.toLocaleString() + ' 条结论'; const rate = m.monitoredAsins ? (m.alertAsins/m.monitoredAsins*100).toFixed(1) : '—'; const summaryNote=document.querySelector('.summary-grid article:nth-child(1) small'); if(summaryNote) summaryNote.textContent=rate + '% 进入预警'; const status=document.querySelector('.data-status small'); if(status) status.textContent='最近分析结果：' + (sourceMeta.b || data.latestResultAt || '待同步') + '；工作台同步：' + (data.refreshedAt || '待同步'); }
   document.querySelectorAll('.workflow > a span').forEach((node,index) => node.textContent = ['预警','归因','利润准入'][index]); document.querySelectorAll('.workflow > div span').forEach((node,index) => node.textContent = ['活动治理','7 天复核'][index]);
   route();
 })();
