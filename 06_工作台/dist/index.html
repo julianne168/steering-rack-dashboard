@@ -397,7 +397,7 @@ window.WORKBENCH_SOURCE_META = {"b":"2026-09-11 11:02"};
       : (actionableDistribution.length ? actionableDistribution.map(item => '<div class="conclusion-chip ' + stateClass(item.label) + '"><span>' + esc(item.label) + '</span><strong>' + Number(item.value || 0).toLocaleString() + '</strong></div>').join('') : '<p class="empty-note">当前没有需要处理的监控结论。</p>');
     const tableHtml = displayColumns.length && rows.length ? '<div class="full-result-table"></div>' : '<div class="empty-note">暂无真实分析明细。运行本模块分析并刷新工作台数据后将自动显示。</div>';
     const files = info.files.map(([label, href]) => '<a class="output" href="' + href + '"><strong>打开' + esc(label) + ' <span>↗</span></strong><small>本地结果文件 · 以最新分析结果为准</small></a>').join('');
-    const filterConfig = id === 'a' ? {field:'预警标记', label:'预警标记', allLabel:'全部预警'} : id === 'b' ? {field:'异常因素', label:'异常因素', allLabel:'全部原因'} : null;
+    const filterConfig = id === 'a' ? {field:'预警标记', label:'预警标记', allLabel:'全部预警'} : id === 'b' ? {field:'异常因素', label:'异常因素', allLabel:'全部原因'} : id === 'd' ? {field:'处理动作', label:'处理动作', allLabel:'全部动作'} : null;
     const filterValues = filterConfig ? [...new Set(rows.map(row => String(row[filterConfig.field] || '').trim()).filter(Boolean))].sort() : [];
     const filterHtml = filterValues.length ? '<label class="alert-filter">' + filterConfig.label + '<select data-detail-filter><option value="">' + filterConfig.allLabel + '</option>' + filterValues.map(value => '<option value="' + esc(value) + '">' + esc(value) + '</option>').join('') + '</select></label>' : '';
     const conclusionTitle = id === 'b' ? 'ASIN 掉量原因' : '监控结论分布';
