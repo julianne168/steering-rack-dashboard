@@ -222,15 +222,20 @@ window.WORKBENCH_MODULE_B_DROP_STARTS = {"B0CBS97JLD":{"dropStart":"2026-08-21",
     const displayColumns = id === 'a'
       ? moduleAIndicators.map(key => columns.find(column => column[1] === key)).filter(Boolean)
       : id === 'b' ? columns.filter(column => column[1] !== '是否对齐') : columns;
-    const rows = raw.rows?.length ? raw.rows : (result.rows || []);
+    const allRows = raw.rows?.length ? raw.rows : (result.rows || []);
+    // “数据不足”只说明当前无法形成利润判断，不占用驾驶舱的监控展示；原始文件仍保留该记录。
+    const rows = id === 'g'
+      ? allRows.filter(row => String(row['状态'] || '').trim() !== '数据不足')
+      : allRows;
     const count = (id === 'a' ? rows.length : baseCount).toLocaleString();
     const moduleHeadline = id === 'a'
       ? rows.length.toLocaleString() + ' 个 ASIN 命中周环比预警'
       : (result.headline || '暂无模块摘要');
-    if (id === 'a') {
+    if (id === 'a' || id === 'g') {
+      const distributionField = id === 'a' ? '预警标记' : '状态';
       const alertCounts = new Map();
       rows.forEach(row => {
-        const label = String(row['预警标记'] || '').trim();
+        const label = String(row[distributionField] || '').trim();
         if (label) alertCounts.set(label, (alertCounts.get(label) || 0) + 1);
       });
       distribution = [...alertCounts.entries()]
