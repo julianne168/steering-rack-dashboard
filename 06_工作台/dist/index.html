@@ -123,11 +123,22 @@ body.module-mode .module-main{margin-right:0;max-width:none}
     <section id="module-workspace" class="module-workspace"></section>
   </main>
 <aside class="right-rail">
-    <div class="rail-title"><span>⚑</span><strong>本周核心指标</strong><small>转向器 · VC1</small></div>
-    <article class="goal-card"><span>预警 ASIN 覆盖</span><strong>160</strong><small>监控范围 3,356 个 ASIN</small><div class="progress"><i style="width:4.8%"></i></div><em>预警占比 4.8%</em></article>
-    <article class="goal-card"><span>主要原因已定位</span><strong>154</strong><small>掉量 ASIN 已进入归因</small><div class="progress green"><i style="width:96.3%"></i></div><em>归因覆盖 96.3%</em></article>
-    <article class="goal-card"><span>利润线内可增投</span><strong>504</strong><small>以最近完整月损益为准</small><div class="progress amber"><i style="width:14%"></i></div><em>占有销量 ASIN 的参考范围</em></article>
-    <article class="goal-card muted-card"><span>否词安全校验</span><strong>597</strong><small>候选词须经模块 E 确认</small><div class="progress purple"><i style="width:100%"></i></div><em>禁止未经校验直接否定</em></article>
+    <section class="rail-overview" aria-label="实时 KPI 总览">
+      <div class="rail-heading"><span>▦</span><strong>实时 KPI 总览</strong></div>
+      <article class="rail-kpi rail-alert"><span>经营预警</span><strong data-side-metric="alert">163</strong><small>覆盖 <b data-side-metric="monitored">3,356</b> 个 ASIN · <em data-side-metric="alert-rate">—</em> 进入预警</small></article>
+      <article class="rail-kpi"><span>掉量归因</span><strong data-side-metric="causes">152</strong><small>条归因结论 · 日粒度 21 天窗口</small></article>
+      <article class="rail-kpi rail-task"><span>☑ 待办任务</span><strong data-side-metric="actions">1,447</strong><small>请先确认责任人与建议动作</small></article>
+      <article class="rail-kpi rail-profit"><span>◈ 利润准入</span><strong data-side-metric="investable">504</strong><small>个 ASIN 位于可增投利润区间</small></article>
+      <article class="rail-kpi rail-stage"><span>⌁ 当前阶段</span><strong>周度复盘</strong><small>W36 vs W35 · 先处理直接异常</small></article>
+      <div class="rail-section-title">⚡ 快捷入口</div>
+      <nav class="rail-shortcuts" aria-label="工作台快捷入口">
+        <a href="#queue">☑ 今日行动队列</a>
+        <a href="#module-b">◌ 掉量归因明细</a>
+        <a href="#execution">◎ 执行与复核控制台</a>
+        <a href="#review">✓ 7 天复核</a>
+      </nav>
+      <footer class="rail-data-note">数据源：转向器广告分析结果<br>最近分析结果：<b data-side-metric="source-date">待同步</b><br>工作台：周度更新</footer>
+    </section>
   </aside>
   
 <script>
