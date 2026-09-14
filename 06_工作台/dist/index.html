@@ -502,9 +502,20 @@ window.WORKBENCH_SOURCE_META = {"b":"2026-09-11 11:02","h":"2026-09-11 17:10"};
         : '<div class="full-result-table"></div>')
       : '<div class="empty-note">暂无真实分析明细。运行本模块分析并刷新工作台数据后将自动显示。</div>';
     const files = info.files.map(([label, href]) => '<a class="output" href="' + href + '"><strong>打开' + esc(label) + ' <span>↗</span></strong><small>本地结果文件 · 以最新分析结果为准</small></a>').join('');
-    const filterConfig = id === 'a' ? {field:'预警标记', label:'预警标记', allLabel:'全部预警'} : id === 'b' ? {field:'异常因素', label:'异常因素', allLabel:'全部原因'} : null;
+    const filterConfigs = {
+      a:{field:'预警标记', label:'预警标记', allLabel:'全部预警'},
+      b:{field:'异常因素', label:'异常因素', allLabel:'全部原因'},
+      c:{field:'处置动作', label:'处置动作', allLabel:'全部动作'},
+      f:{field:'类型', label:'类型', allLabel:'全部类型'},
+      g:{field:'状态', label:'状态', allLabel:'全部状态'},
+      h:{field:'状态', label:'状态', allLabel:'全部状态'}
+    };
+    const proposedFilter = filterConfigs[id];
+    const filterConfig = proposedFilter && columns.some(column => column[1] === proposedFilter.field) ? proposedFilter : null;
     const filterValues = filterConfig ? [...new Set(rows.map(row => String(row[filterConfig.field] || '').trim()).filter(Boolean))].sort() : [];
-    const filterHtml = filterValues.length ? '<label class="alert-filter">' + filterConfig.label + '<select data-detail-filter><option value="">' + filterConfig.allLabel + '</option>' + filterValues.map(value => '<option value="' + esc(value) + '">' + esc(value) + '</option>').join('') + '</select></label>' : '';
+    const categoryFilterHtml = filterValues.length ? '<label class="alert-filter">' + filterConfig.label + '<select data-detail-filter><option value="">' + filterConfig.allLabel + '</option>' + filterValues.map(value => '<option value="' + esc(value) + '">' + esc(value) + '</option>').join('') + '</select></label>' : '';
+    const closureFilterHtml = id !== 'd' && rows.length ? '<label class="alert-filter">闭环状态<select data-closure-filter><option value="">全部闭环状态</option>' + closureStatuses.map(([value,label]) => '<option value="' + value + '">' + label + '</option>').join('') + '</select></label>' : '';
+    const filterHtml = categoryFilterHtml + closureFilterHtml;
     const conclusionTitle = id === 'b' ? 'ASIN 掉量原因' : '监控结论分布';
     const chartHtml = renderCharts(id, rows);
     const kpiHtml = id === 'a' ? moduleAKpis(rows) : '';
@@ -648,8 +659,21 @@ window.WORKBENCH_SOURCE_META = {"b":"2026-09-11 11:02","h":"2026-09-11 17:10"};
         renderTablePage(container, filteredRows, page, nextPage => { page = nextPage; renderDetailPage(); });
         workspace.querySelector('.detail-count').textContent = '真实数据 ' + filteredRows.length.toLocaleString() + ' 条';
       };
+      let selectedCategory = '';
+      let selectedClosureStatus = '';
+      const applyDetailFilters = () => {
+        filteredRows = rows.filter(row =>
+          (!selectedCategory || String(row[filterConfig?.field] || '').trim() === selectedCategory) &&
+          (!selectedClosureStatus || closureRecord(row).status === selectedClosureStatus)
+        );
+        selectedClosureKeys.clear();
+        page = 1;
+        renderDetailPage();
+        updateBatchToolbar();
+      };
       renderDetailPage();
-      workspace.querySelector('[data-detail-filter]')?.addEventListener('change', event => { filteredRows = event.currentTarget.value ? rows.filter(row => String(row[filterConfig.field] || '').trim() === event.currentTarget.value) : rows; selectedClosureKeys.clear(); page = 1; renderDetailPage(); updateBatchToolbar(); });
+      workspace.querySelector('[data-detail-filter]')?.addEventListener('change', event => { selectedCategory = event.currentTarget.value; applyDetailFilters(); });
+      workspace.querySelector('[data-closure-filter]')?.addEventListener('change', event => { selectedClosureStatus = event.currentTarget.value; applyDetailFilters(); });
     }
     document.body.classList.add('module-mode'); home.hidden = true; moduleView.hidden = false; setActive(id); document.title = info.title + ' · 转向器驾驶舱'; window.scrollTo(0,0);
   }
