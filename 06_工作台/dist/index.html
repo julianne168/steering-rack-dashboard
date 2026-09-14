@@ -413,16 +413,6 @@ window.WORKBENCH_SOURCE_META = {"b":"2026-09-11 11:02","h":"2026-09-11 17:10"};
         .map(([label, value]) => ({ label, value }))
         .sort((left, right) => right.value - left.value);
     }
-    if (id === 'h') {
-      const coverage = [
-        ['材料费用', '材料占比'],
-        ['物流费用', '头程占比'],
-        ['推广费用', '推广合计占比'],
-        ['促销折扣', '促销折扣占比'],
-        ['退款金额', '退款金额占比']
-      ];
-      distribution = coverage.map(([label, field]) => ({label, value: rows.filter(row => (numberValue(row[field]) || 0) > 0).length}));
-    }
     const flow = [['a','预警'],['b','归因'],['g','利润准入'],['h','费用一览'],['c','活动重构'],['d','否词校验'],['f','潜力词']]
       .map(([key,label]) => '<a href="#module-' + key + '" class="flow-link ' + (key === id ? 'current' : '') + '">' + label + '</a>').join('<i>→</i>') + '<i>→</i><a href="#review" class="flow-link review" data-review>7 天复核</a>';
     // “未标记”不属于需要处理的监控结论，不在模块结论区占用卡片；原始明细仍完整保留。
@@ -441,12 +431,12 @@ window.WORKBENCH_SOURCE_META = {"b":"2026-09-11 11:02","h":"2026-09-11 17:10"};
     const filterConfig = id === 'a' ? {field:'预警标记', label:'预警标记', allLabel:'全部预警'} : id === 'b' ? {field:'异常因素', label:'异常因素', allLabel:'全部原因'} : null;
     const filterValues = filterConfig ? [...new Set(rows.map(row => String(row[filterConfig.field] || '').trim()).filter(Boolean))].sort() : [];
     const filterHtml = filterValues.length ? '<label class="alert-filter">' + filterConfig.label + '<select data-detail-filter><option value="">' + filterConfig.allLabel + '</option>' + filterValues.map(value => '<option value="' + esc(value) + '">' + esc(value) + '</option>').join('') + '</select></label>' : '';
-    const conclusionTitle = id === 'b' ? 'ASIN 掉量原因' : id === 'h' ? '费用项目覆盖' : '监控结论分布';
+    const conclusionTitle = id === 'b' ? 'ASIN 掉量原因' : '监控结论分布';
     const chartHtml = renderCharts(id, rows);
     const kpiHtml = id === 'a' ? moduleAKpis(rows) : '';
     const frameworkTitle = id === 'c' ? '哪些活动需要拆分' : '监控判断逻辑';
     const logicPanel = '<article class="module-panel"><p class="eyebrow">' + frameworkTitle + '</p><ol class="logic-list">' + logic.map((item,index) => '<li><b>' + (index+1) + '</b><span>' + esc(item) + '</span></li>').join('') + '</ol></article>';
-    const modulePanelsHtml = id === 'b'
+    const modulePanelsHtml = id === 'b' || id === 'h'
       ? '<section class="module-layout b-top-layout">' + logicPanel + '</section>'
       : '<section class="module-layout">' + logicPanel + '<article class="module-panel"><p class="eyebrow">' + conclusionTitle + '</p><div class="conclusion-list">' + distributionHtml + '</div></article></section>';
     workspace.innerHTML = '<section class="module-banner"><div><p class="eyebrow green">广告监控视图 · ' + esc(info.scope) + '</p><h1>' + esc(info.title) + '</h1><p>' + esc(moduleHeadline) + '</p></div><div class="module-kpi"><strong>' + count + '</strong><span>' + esc(info.kpi) + '</span><small>同步：' + esc(sourceMeta[id] || data.refreshedAt || '待同步') + '</small></div></section><nav class="module-flow" aria-label="广告监控闭环">' + flow + '</nav>' + modulePanelsHtml + kpiHtml + chartHtml + '<section class="module-panel results-panel"><div class="result-heading"><div><p class="eyebrow">全部真实分析明细</p><h2>已纳入全部 ' + rows.length.toLocaleString() + ' 条结果</h2><p>字段和记录均来自本模块的最新分析结果文件，可横向滚动查看。</p></div><div class="result-actions">' + filterHtml + '<span class="status-pill detail-count">' + (rows.length ? '真实数据 ' + rows.length.toLocaleString() + ' 条' : '等待数据同步') + '</span></div></div>' + tableHtml + '</section><section class="module-panel output-panel"><div><p class="eyebrow">完整结果文件</p><h2>在本地打开原始结果</h2></div><div class="output-list">' + files + '</div><p class="file-help">本文件放在 <code>06_工作台/dist</code> 目录时，结果文件链接可直接在本地打开。</p></section>';
