@@ -510,8 +510,7 @@ window.WORKBENCH_SOURCE_META = {"b":"2026-09-11 11:02","h":"2026-09-11 17:10"};
       g:{field:'状态', label:'状态', allLabel:'全部状态'},
       h:{field:'状态', label:'状态', allLabel:'全部状态'}
     };
-    const proposedFilter = filterConfigs[id];
-    const filterConfig = proposedFilter && columns.some(column => column[1] === proposedFilter.field) ? proposedFilter : null;
+    const filterConfig = filterConfigs[id] || null;
     const filterValues = filterConfig ? [...new Set(rows.map(row => String(row[filterConfig.field] || '').trim()).filter(Boolean))].sort() : [];
     const categoryFilterHtml = filterValues.length ? '<label class="alert-filter">' + filterConfig.label + '<select data-detail-filter><option value="">' + filterConfig.allLabel + '</option>' + filterValues.map(value => '<option value="' + esc(value) + '">' + esc(value) + '</option>').join('') + '</select></label>' : '';
     const closureFilterHtml = id !== 'd' && rows.length ? '<label class="alert-filter">闭环状态<select data-closure-filter><option value="">全部闭环状态</option>' + closureStatuses.map(([value,label]) => '<option value="' + value + '">' + label + '</option>').join('') + '</select></label>' : '';
