@@ -184,6 +184,10 @@ window.WORKBENCH_SOURCE_META = {"b":"2026-09-11 11:02","h":"2026-09-11 17:10"};
   const home = document.querySelector('#overview');
   const moduleView = document.querySelector('#module-view');
   const workspace = document.querySelector('#module-workspace');
+  // 单 ASIN 费用一览是所有调整动作之前的效果基线，固定在“监控视图”的第一个模块位。
+  const costBaselineNav = document.querySelector('.left-nav .nav-link[href="#module-h"]');
+  const firstActionModuleNav = document.querySelector('.left-nav .nav-link[href="#module-a"]');
+  if (costBaselineNav && firstActionModuleNav) firstActionModuleNav.parentElement.insertBefore(costBaselineNav, firstActionModuleNav);
   const esc = value => String(value ?? '—').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
   const shorter = value => { const text = String(value ?? '—'); return text.length > 46 ? text.slice(0,46) + '…' : text; };
   const costRatioFields = new Set(['毛利率','材料占比','头程占比','尾程占比','推广合计占比','促销折扣占比','退款金额占比','仓储费占比','库内操作费占比','佣金占比','税费占比']);
