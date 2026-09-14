@@ -599,7 +599,9 @@ window.WORKBENCH_SOURCE_META = {"b":"2026-09-11 11:02","h":"2026-09-11 17:10"};
     const kpiHtml = id === 'a' ? moduleAKpis(rows) : '';
     const frameworkTitle = id === 'a' ? '转向器周环比效果预警逻辑' : id === 'c' ? '哪些活动需要拆分' : '监控判断逻辑';
     const logicPanel = '<article class="module-panel"><p class="eyebrow">' + frameworkTitle + '</p><ol class="logic-list">' + logic.map((item,index) => '<li><b>' + (index+1) + '</b><span>' + esc(item) + '</span></li>').join('') + '</ol></article>';
-    const modulePanelsHtml = id === 'b' || id === 'h'
+    const modulePanelsHtml = id === 'h'
+      ? ''
+      : id === 'b'
       ? '<section class="module-layout b-top-layout">' + logicPanel + '</section>'
       : '<section class="module-layout">' + logicPanel + '<article class="module-panel"><p class="eyebrow">' + conclusionTitle + '</p><div class="conclusion-list">' + distributionHtml + '</div></article></section>';
     const resultNote = id === 'h' ? '作为调整前的费用与利润基线，只读展示单 ASIN 费用、销量、销售额、毛利率与退款金额占比。' : id === 'd' ? '仅展示需要新增否词的搜索词明细；可勾选同类记录批量处理，或点击“记录处理”填写执行过程与 7 天复核。' : '字段和记录均来自本模块的最新分析结果文件；可勾选同类记录批量处理，或点击“记录处理”填写单条处理过程与 7 天复核。';
