@@ -91,6 +91,7 @@ body.module-mode .module-main{margin-right:0;max-width:none}
     <a class="nav-link" href="#module-f">潜力词</a>
     <p class="nav-caption space">协同</p>
     <a class="nav-link" href="#queue"><span>☑</span>统一行动队列 <b>1,447</b></a>
+    <a class="nav-link" href="#review"><span>✓</span>效果追踪</a>
     <a class="nav-link" href="#data"><span>▤</span>数据与质检</a>
     <div class="nav-bottom">‹ 折叠导航</div>
   </aside>
@@ -191,7 +192,7 @@ window.WORKBENCH_SOURCE_META = {"b":"2026-09-11 11:02","h":"2026-09-11 17:10"};
     return value;
   };
   const stateClass = label => /禁止|异常|直接原因|高于|风险/.test(String(label)) ? 'risk' : /可增投|可否定|增长|正常|安全/.test(String(label)) ? 'safe' : /待|候选|关注|预警/.test(String(label)) ? 'watch' : 'neutral';
-  const setActive = id => document.querySelectorAll('.nav-link').forEach(link => link.classList.toggle('active', id ? link.getAttribute('href') === '#module-' + id : link.getAttribute('href') === '#overview'));
+  const setActive = id => document.querySelectorAll('.nav-link').forEach(link => link.classList.toggle('active', id === 'review' ? link.getAttribute('href') === '#review' : (id ? link.getAttribute('href') === '#module-' + id : link.getAttribute('href') === '#overview')));
   const chartConfigs = {
     a:[{type:'donut',field:'预警标记',title:'预警类型构成',note:'按预警 ASIN 数量统计'},{type:'grouped-sales',field:'预警标记',periods:[['W35','上上周销售额'],['W36','上周销售额']],title:'预警类型销售额周对比',note:'按预警标记分组，对比两周销售额'}],
     b:[{type:'donut',field:'原因分类',title:'归因类型构成',note:'区分直接原因、观察项与外部因素'},{type:'line-date',field:'掉量起点',title:'掉量起点分布',note:'按首次掉量日期统计'}],
@@ -438,7 +439,7 @@ window.WORKBENCH_SOURCE_META = {"b":"2026-09-11 11:02","h":"2026-09-11 17:10"};
         requestAnimationFrame(() => workspace.querySelector('[data-closure-key="' + CSS.escape(key) + '"]')?.click());
       }));
     };
-    document.body.classList.add('module-mode'); home.hidden = true; moduleView.hidden = false; setActive(); document.title = '效果追踪 · 转向器驾驶舱'; render(); window.scrollTo(0,0);
+    document.body.classList.add('module-mode'); home.hidden = true; moduleView.hidden = false; setActive('review'); document.title = '效果追踪 · 转向器驾驶舱'; render(); window.scrollTo(0,0);
   }
   function setHome(anchor) {
     document.body.classList.remove('module-mode');
