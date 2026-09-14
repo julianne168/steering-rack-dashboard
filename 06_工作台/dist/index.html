@@ -132,7 +132,7 @@ body.module-mode .module-main{margin-right:0;max-width:none}
     </section>
     <section class="panel queue" id="queue">
       <div class="panel-title"><div><span class="icon">☑</span><strong>模块待干预总览</strong><small>汇总各模块当前需要运营干预的对象数量</small></div></div>
-      <div class="action-summary-grid"><a class="action-summary-card p0" href="#module-a"><span>经营预警</span><strong>163</strong><small>待干预 ASIN</small><em>进入预警明细 →</em></a><a class="action-summary-card p0" href="#module-b"><span>异常归因</span><strong>152</strong><small>待处理掉量 ASIN</small><em>进入归因明细 →</em></a><a class="action-summary-card p1" href="#module-c"><span>活动重构</span><strong>426</strong><small>待重构活动</small><em>进入活动清单 →</em></a><a class="action-summary-card p1" href="#module-d"><span>否词校验</span><strong>597</strong><small>候选否词 / 待校验词</small><em>进入否词清单 →</em></a><a class="action-summary-card p2" href="#module-f"><span>潜力词</span><strong>419</strong><small>待测试搜索词</small><em>进入潜力词清单 →</em></a><a class="action-summary-card p1" href="#module-g"><span>利润准入</span><strong>31</strong><small>需优化利润 ASIN</small><em>进入利润明细 →</em></a></div></section><section class="data-status" id="data"><span id="review">7 天复核</span><strong>回到模块 A / B 复核单量、销售额、TACOS 与直接异常是否改善</strong><strong>模块 A：W36 vs W35</strong><strong>模块 B：21 天窗口</strong><strong>模块 G：2026-08 成本</strong><small>原数据与结果文件保存在资料包中，可从各模块工作区打开。</small></section>
+      <div class="action-summary-grid"><a class="action-summary-card p0" href="#module-a"><span>经营预警</span><strong>163</strong><small>待干预 ASIN</small><em>进入预警明细 →</em></a><a class="action-summary-card p0" href="#module-b"><span>异常归因</span><strong>152</strong><small>待处理掉量 ASIN</small><em>进入归因明细 →</em></a><a class="action-summary-card p1" href="#module-c"><span>活动重构</span><strong>426</strong><small>待重构活动</small><em>进入活动清单 →</em></a><a class="action-summary-card p1" href="#module-d"><span>否词校验</span><strong>362</strong><small>待新增否词</small><em>进入否词清单 →</em></a><a class="action-summary-card p2" href="#module-f"><span>潜力词</span><strong>419</strong><small>待测试搜索词</small><em>进入潜力词清单 →</em></a><a class="action-summary-card p1" href="#module-g"><span>利润准入</span><strong>31</strong><small>需优化利润 ASIN</small><em>进入利润明细 →</em></a></div></section><section class="data-status" id="data"><span id="review">7 天复核</span><strong>回到模块 A / B 复核单量、销售额、TACOS 与直接异常是否改善</strong><strong>模块 A：W36 vs W35</strong><strong>模块 B：21 天窗口</strong><strong>模块 G：2026-08 成本</strong><small>原数据与结果文件保存在资料包中，可从各模块工作区打开。</small></section>
   </main>
   <main class="center module-main" id="module-view" hidden aria-live="polite">
     <a class="back-link" href="#overview" data-home>← 返回广告监控看板</a>
@@ -524,29 +524,35 @@ window.WORKBENCH_SOURCE_META = {"b":"2026-09-11 11:02","h":"2026-09-11 17:10"};
     const rows = id === 'g'
       ? allRows.filter(row => String(row['状态'] || '').trim() !== '数据不足')
       : allRows;
-    const count = ((id === 'a' || id === 'b' || id === 'h') ? rows.length : baseCount).toLocaleString();
+    // 模块 D 只把“新增否词”带入工作台统计、图表、闭环与明细；移除建议仍保留在原始结果文件中。
+    const workRows = id === 'd'
+      ? rows.filter(row => String(row['处理动作'] || '').trim() !== '从否词清单移除')
+      : rows;
+    const count = ((id === 'a' || id === 'b' || id === 'd' || id === 'h') ? workRows.length : baseCount).toLocaleString();
     const moduleHeadline = id === 'a'
       ? rows.length.toLocaleString() + ' 个 ASIN 命中周环比预警'
       : id === 'b'
         ? rows.length.toLocaleString() + ' 条掉量归因结论，其中 ' + rows.filter(row => String(row['原因分类'] || '').trim() === '直接原因').length.toLocaleString() + ' 条为直接原因'
       : id === 'h'
         ? rows.length.toLocaleString() + ' 个商品编码 + ASIN 组合，展示毛利率与全部费用占比'
+      : id === 'd'
+        ? workRows.length.toLocaleString() + ' 条需新增否词，可按广告活动与否定层级批量执行'
       : (result.headline || '暂无模块摘要');
     const closureProgressHtml = () => {
       const buckets = {pending:0, active:0, review:0, closed:0};
-      rows.forEach(row => {
+      workRows.forEach(row => {
         const status = closureRecord(row).status;
         if (status === 'closed' || status === 'skipped') buckets.closed += 1;
         else if (status === 'review' || status === 'executed') buckets.review += 1;
         else if (status === 'confirmed' || status === 'in_progress') buckets.active += 1;
         else buckets.pending += 1;
       });
-      return '<section class="closure-progress" data-closure-progress><div class="closure-progress-heading"><div><p class="eyebrow">处理与效果追踪</p><small>运营自主选择动作；首次保存时锁定真实数据基线，7 天后复核效果。</small></div><span>共 ' + rows.length.toLocaleString() + ' 条</span></div><div class="closure-progress-grid"><div><span>待处理</span><strong>' + buckets.pending.toLocaleString() + '</strong></div><div><span>处理中</span><strong>' + buckets.active.toLocaleString() + '</strong></div><div><span>待复核</span><strong>' + buckets.review.toLocaleString() + '</strong></div><div><span>已关闭</span><strong>' + buckets.closed.toLocaleString() + '</strong></div></div></section>';
+      return '<section class="closure-progress" data-closure-progress><div class="closure-progress-heading"><div><p class="eyebrow">处理与效果追踪</p><small>运营自主选择动作；首次保存时锁定真实数据基线，7 天后复核效果。</small></div><span>共 ' + workRows.length.toLocaleString() + ' 条</span></div><div class="closure-progress-grid"><div><span>待处理</span><strong>' + buckets.pending.toLocaleString() + '</strong></div><div><span>处理中</span><strong>' + buckets.active.toLocaleString() + '</strong></div><div><span>待复核</span><strong>' + buckets.review.toLocaleString() + '</strong></div><div><span>已关闭</span><strong>' + buckets.closed.toLocaleString() + '</strong></div></div></section>';
     };
-    if (id === 'a' || id === 'b' || id === 'g') {
-      const distributionField = id === 'a' ? '预警标记' : id === 'b' ? '异常因素' : '状态';
+    if (id === 'a' || id === 'b' || id === 'd' || id === 'g') {
+      const distributionField = id === 'a' ? '预警标记' : id === 'b' ? '异常因素' : id === 'd' ? '可否决' : '状态';
       const alertCounts = new Map();
-      rows.forEach(row => {
+      workRows.forEach(row => {
         const label = String(row[distributionField] || '').trim();
         if (label) alertCounts.set(label, (alertCounts.get(label) || 0) + 1);
       });
@@ -561,11 +567,10 @@ window.WORKBENCH_SOURCE_META = {"b":"2026-09-11 11:02","h":"2026-09-11 17:10"};
     const distributionHtml = id === 'b'
       ? bCauseDistribution(distribution)
       : (actionableDistribution.length ? actionableDistribution.map(item => '<div class="conclusion-chip ' + stateClass(item.label) + '"><span>' + esc(item.label) + '</span><strong>' + Number(item.value || 0).toLocaleString() + '</strong></div>').join('') : '<p class="empty-note">当前没有需要处理的监控结论。</p>');
-    const addNegativeRows = id === 'd' ? rows.filter(row => String(row['处理动作'] || '').trim() !== '从否词清单移除') : [];
-    const detailRows = id === 'd' ? addNegativeRows : rows;
+    const detailRows = workRows;
     const negativeLevel = row => /L3/.test(String(row['处理动作'] || '')) ? 'L3 广告组级否定' : /L2/.test(String(row['处理动作'] || '')) ? 'L2 广告活动级否定' : '待确认否定层级';
     const negativeCampaigns = id === 'd' ? [...new Set(detailRows.map(row => String(row['广告活动'] || '').trim()).filter(Boolean))].sort() : [];
-    const tableHtml = tableColumns.length && rows.length
+    const tableHtml = tableColumns.length && detailRows.length
       ? '<div class="full-result-table"></div>'
       : '<div class="empty-note">暂无真实分析明细。运行本模块分析并刷新工作台数据后将自动显示。</div>';
     const files = info.files.map(([label, href]) => '<a class="output" href="' + href + '"><strong>打开' + esc(label) + ' <span>↗</span></strong><small>本地结果文件 · 以最新分析结果为准</small></a>').join('');
@@ -578,13 +583,13 @@ window.WORKBENCH_SOURCE_META = {"b":"2026-09-11 11:02","h":"2026-09-11 17:10"};
       h:{field:'状态', label:'状态', allLabel:'全部状态'}
     };
     const filterConfig = filterConfigs[id] || null;
-    const filterValues = filterConfig ? [...new Set(rows.map(row => String(row[filterConfig.field] || '').trim()).filter(Boolean))].sort() : [];
+    const filterValues = filterConfig ? [...new Set(workRows.map(row => String(row[filterConfig.field] || '').trim()).filter(Boolean))].sort() : [];
     const categoryFilterHtml = filterValues.length ? '<label class="alert-filter">' + filterConfig.label + '<select data-detail-filter><option value="">' + filterConfig.allLabel + '</option>' + filterValues.map(value => '<option value="' + esc(value) + '">' + esc(value) + '</option>').join('') + '</select></label>' : '';
     const closureFilterHtml = id !== 'd' && rows.length ? '<label class="alert-filter">闭环状态<select data-closure-filter><option value="">全部闭环状态</option>' + closureStatuses.map(([value,label]) => '<option value="' + value + '">' + label + '</option>').join('') + '</select></label>' : '';
     const negativeFilterHtml = id === 'd' ? '<label class="alert-filter">广告活动<select data-negative-campaign-filter><option value="">全部活动</option>' + negativeCampaigns.map(value => '<option value="' + esc(value) + '">' + esc(value) + '</option>').join('') + '</select></label><label class="alert-filter">否定层级<select data-negative-level-filter><option value="">全部层级</option><option value="L2 广告活动级否定">L2 广告活动级否定</option><option value="L3 广告组级否定">L3 广告组级否定</option><option value="待确认否定层级">待确认否定层级</option></select></label>' : '';
     const filterHtml = categoryFilterHtml + closureFilterHtml + negativeFilterHtml;
     const conclusionTitle = id === 'b' ? 'ASIN 掉量原因' : '监控结论分布';
-    const chartHtml = renderCharts(id, rows);
+    const chartHtml = renderCharts(id, workRows);
     const kpiHtml = id === 'a' ? moduleAKpis(rows) : '';
     const frameworkTitle = id === 'c' ? '哪些活动需要拆分' : '监控判断逻辑';
     const logicPanel = '<article class="module-panel"><p class="eyebrow">' + frameworkTitle + '</p><ol class="logic-list">' + logic.map((item,index) => '<li><b>' + (index+1) + '</b><span>' + esc(item) + '</span></li>').join('') + '</ol></article>';
