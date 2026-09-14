@@ -193,8 +193,7 @@ window.WORKBENCH_SOURCE_META = {"b":"2026-09-11 11:02","h":"2026-09-11 17:10"};
     c:[{type:'donut',field:'处置动作',title:'活动处置动作构成',note:'按待处理活动统计'},{type:'bar',field:'原活动名',value:'错配花费',title:'错配花费 Top 5 活动',note:'按明细中的错配花费汇总'}],
     d:[{type:'donut',field:'可否决',title:'否词处理建议构成',note:'按否定可执行性统计'},{type:'bar',field:'原判定类型',title:'候选问题类型 Top 5',note:'按原始判定类型统计'}],
     f:[{type:'donut',field:'类型',title:'增长机会类型构成',note:'按机会词类型统计'},{type:'bar',field:'建议匹配类型',value:'销售额',title:'机会销售额按匹配方式',note:'按建议匹配方式汇总'}],
-    g:[{type:'donut',field:'状态',title:'利润状态分布',note:'按 ASIN 当前利润状态统计'},{type:'bar',fields:['当前ACOS%','目标ACOS%','平衡ACOS%'],title:'整体 ACOS 水平',note:'所有纳入 ASIN 的平均值'},{type:'bullet',current:'当前ACOS%',target:'目标ACOS%',benchmark:'平衡ACOS%',title:'ACOS 三线对比',note:'当前 ACOS、目标 ACOS 与盈亏平衡 ACOS（所有纳入 ASIN 的平均值）'}],
-    h:[{type:'bar',field:'ASIN',value:'销售额',title:'销售额 Top 5 ASIN',note:'按商品编码 + ASIN 汇总销售额'},{type:'bar',fields:['材料占比','头程占比','尾程占比','推广合计占比','促销折扣占比','退款金额占比','仓储费占比','库内操作费占比','佣金占比','税费占比'],weight:'销售额',scale:100,limit:5,title:'费用占比 Top 5',note:'按销售额加权汇总的费用占比前 5 项'}]
+    g:[{type:'donut',field:'状态',title:'利润状态分布',note:'按 ASIN 当前利润状态统计'},{type:'bar',fields:['当前ACOS%','目标ACOS%','平衡ACOS%'],title:'整体 ACOS 水平',note:'所有纳入 ASIN 的平均值'},{type:'bullet',current:'当前ACOS%',target:'目标ACOS%',benchmark:'平衡ACOS%',title:'ACOS 三线对比',note:'当前 ACOS、目标 ACOS 与盈亏平衡 ACOS（所有纳入 ASIN 的平均值）'}]
   };
   const numberValue = value => { const parsed = Number(String(value ?? '').replace(/[^0-9.-]/g, '')); return Number.isFinite(parsed) ? parsed : null; };
   const chartColors = ['#2877dc','#20ad69','#efa527','#c576dd','#e96d6a','#7b9dbd'];
@@ -316,7 +315,7 @@ window.WORKBENCH_SOURCE_META = {"b":"2026-09-11 11:02","h":"2026-09-11 17:10"};
       return '<div class="cause-row ' + (severity[item.label] || 'neutral') + '"><span class="cause-label">' + esc(item.label) + '</span><span class="cause-track"><i style="width:' + (total ? (value / total * 100).toFixed(2) : 0) + '%"></i></span><strong>' + value.toLocaleString() + ' <em>(' + percentage + '%)</em></strong></div>';
     }).join('') + '</div>';
   };
-  const renderCharts = (id, rows) => { if (id === 'b') return bCharts(rows); const configs = chartConfigs[id] || []; return configs.length ? '<section class="analysis-charts" aria-label="' + esc(modules[id]?.name || '模块') + '分析图表">' + configs.map(config => chartCard(config, rows)).join('') + '</section>' : ''; };
+  const renderCharts = (id, rows) => { if (id === 'b') return bCharts(rows); if (id === 'h') return moduleHKpis(rows); const configs = chartConfigs[id] || []; return configs.length ? '<section class="analysis-charts" aria-label="' + esc(modules[id]?.name || '模块') + '分析图表">' + configs.map(config => chartCard(config, rows)).join('') + '</section>' : ''; };
   const moduleAKpis = rows => {
     const sum = field => rows.reduce((total, row) => total + (numberValue(row[field]) || 0), 0);
     const weighted = (field, weight) => {
@@ -353,6 +352,23 @@ window.WORKBENCH_SOURCE_META = {"b":"2026-09-11 11:02","h":"2026-09-11 17:10"};
       ['TACOS', rate(current.tacos), deltaText(current.tacos,previous.tacos,'points'), 'tacos']
     ];
     return '<section class="module-a-kpis" aria-label="预警 ASIN 关键 KPI"><div class="kpi-section-heading"><div><p class="eyebrow">预警 ASIN 关键 KPI</p><small>仅统计本模块命中的 ' + rows.length.toLocaleString() + ' 个预警 ASIN；W36 对比 W35</small></div></div><div class="module-a-kpi-grid">' + cards.map(([label,value,delta,key]) => '<article class="module-a-kpi ' + key + '"><span>' + label + '</span><strong>' + value + '</strong><small>' + delta + '</small></article>').join('') + '</div></section>';
+  };
+  const moduleHKpis = rows => {
+    const sum = field => rows.reduce((total, row) => total + (numberValue(row[field]) || 0), 0);
+    const weighted = field => {
+      let numerator = 0, denominator = 0;
+      rows.forEach(row => { const value = numberValue(row[field]), sales = numberValue(row['销售额']); if (value !== null && sales !== null && sales > 0) { numerator += value * sales; denominator += sales; } });
+      return denominator ? numerator / denominator : null;
+    };
+    const amount = value => value.toLocaleString(undefined,{maximumFractionDigits:2});
+    const rate = value => value === null ? '—' : (value * 100).toFixed(2) + '%';
+    const cards = [
+      ['销量', Math.round(sum('销量')).toLocaleString(), '2026 年 8 月汇总', 'units'],
+      ['销售额', amount(sum('销售额')), '2026 年 8 月汇总', 'sales'],
+      ['毛利率', rate(weighted('毛利率')), '按销售额加权', 'margin'],
+      ['退款金额占比', rate(weighted('退款金额占比')), '按销售额加权', 'refund']
+    ];
+    return '<section class="module-a-kpis module-h-kpis" aria-label="单 ASIN 费用关键指标"><div class="kpi-section-heading"><div><p class="eyebrow">单ASIN费用关键指标</p><small>基于 ' + rows.length.toLocaleString() + ' 个商品编码 + ASIN 组合的 2026 年 8 月汇总</small></div></div><div class="module-a-kpi-grid">' + cards.map(([label,value,note,key]) => '<article class="module-a-kpi ' + key + '"><span>' + label + '</span><strong>' + value + '</strong><small>' + note + '</small></article>').join('') + '</div></section>';
   };
 
   function setHome(anchor) {
