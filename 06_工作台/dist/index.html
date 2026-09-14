@@ -84,10 +84,10 @@ body.module-mode .module-main{margin-right:0;max-width:none}
     <p class="nav-caption">监控总览</p>
     <a class="nav-link active" href="#overview"><span>⌂</span>广告监控看板</a>
     <p class="nav-caption">监控视图</p>
+    <a class="nav-link" href="#module-h">单ASIN费用一览</a>
     <a class="nav-link" href="#module-a">经营预警 <b>160</b></a>
     <a class="nav-link" href="#module-b">异常归因 <b>154</b></a>
     <a class="nav-link" href="#module-g">利润准入</a>
-    <a class="nav-link" href="#module-h">单ASIN费用一览</a>
     <a class="nav-link" href="#module-c">活动重构</a>
     <a class="nav-link" href="#module-d">否词校验</a>
     <a class="nav-link" href="#module-f">潜力词</a>
@@ -562,7 +562,7 @@ window.WORKBENCH_SOURCE_META = {"b":"2026-09-11 11:02","h":"2026-09-11 17:10"};
         .map(([label, value]) => ({ label, value }))
         .sort((left, right) => right.value - left.value);
     }
-    const flow = [['a','预警'],['b','归因'],['g','利润准入'],['h','费用一览'],['c','活动重构'],['d','否词校验'],['f','潜力词']]
+    const flow = [['h','费用一览'],['a','预警'],['b','归因'],['g','利润准入'],['c','活动重构'],['d','否词校验'],['f','潜力词']]
       .map(([key,label]) => '<a href="#module-' + key + '" class="flow-link ' + (key === id ? 'current' : '') + '">' + label + '</a>').join('<i>→</i>') + '<i>→</i><a href="#review" class="flow-link review" data-review>7 天复核</a>';
     // “未标记”不属于需要处理的监控结论，不在模块结论区占用卡片；原始明细仍完整保留。
     const actionableDistribution = distribution.filter(item => String(item.label || '').trim() !== '未标记');
