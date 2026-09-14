@@ -561,12 +561,10 @@ window.WORKBENCH_SOURCE_META = {"b":"2026-09-11 11:02","h":"2026-09-11 17:10"};
     const distributionHtml = id === 'b'
       ? bCauseDistribution(distribution)
       : (actionableDistribution.length ? actionableDistribution.map(item => '<div class="conclusion-chip ' + stateClass(item.label) + '"><span>' + esc(item.label) + '</span><strong>' + Number(item.value || 0).toLocaleString() + '</strong></div>').join('') : '<p class="empty-note">当前没有需要处理的监控结论。</p>');
-    const removeNegativeRows = id === 'd' ? rows.filter(row => String(row['处理动作'] || '').trim() === '从否词清单移除') : [];
     const addNegativeRows = id === 'd' ? rows.filter(row => String(row['处理动作'] || '').trim() !== '从否词清单移除') : [];
+    const detailRows = id === 'd' ? addNegativeRows : rows;
     const tableHtml = tableColumns.length && rows.length
-      ? (id === 'd'
-        ? '<div class="negative-detail-groups"><section class="negative-detail-block"><div class="negative-detail-heading"><div><h3>从否词清单移除</h3><p>恢复被误否的搜索词；不新增否词。</p></div><span class="status-pill">真实数据 ' + removeNegativeRows.length.toLocaleString() + ' 条</span></div><div class="full-result-table" data-detail-group="remove"></div></section><section class="negative-detail-block"><div class="negative-detail-heading"><div><h3>不适配搜索词 · 新增否词</h3><p>按活动级 L2 或 ASIN 广告组 L3 执行否定。</p></div><span class="status-pill">真实数据 ' + addNegativeRows.length.toLocaleString() + ' 条</span></div><div class="full-result-table" data-detail-group="add"></div></section></div>'
-        : '<div class="full-result-table"></div>')
+      ? '<div class="full-result-table"></div>'
       : '<div class="empty-note">暂无真实分析明细。运行本模块分析并刷新工作台数据后将自动显示。</div>';
     const files = info.files.map(([label, href]) => '<a class="output" href="' + href + '"><strong>打开' + esc(label) + ' <span>↗</span></strong><small>本地结果文件 · 以最新分析结果为准</small></a>').join('');
     const filterConfigs = {
@@ -590,14 +588,15 @@ window.WORKBENCH_SOURCE_META = {"b":"2026-09-11 11:02","h":"2026-09-11 17:10"};
     const modulePanelsHtml = id === 'b' || id === 'h'
       ? '<section class="module-layout b-top-layout">' + logicPanel + '</section>'
       : '<section class="module-layout">' + logicPanel + '<article class="module-panel"><p class="eyebrow">' + conclusionTitle + '</p><div class="conclusion-list">' + distributionHtml + '</div></article></section>';
-    const resultNote = '字段和记录均来自本模块的最新分析结果文件；可勾选同类记录批量处理，或点击“记录处理”填写单条处理过程与 7 天复核。';
-    const batchToolbarHtml = '<div class="batch-toolbar" data-batch-toolbar><div><strong>批量处理</strong><span data-batch-count>已选择 0 条</span><small>先按相同原因或条件筛选，再勾选同类记录统一处理。</small></div><div class="batch-toolbar-actions"><button type="button" data-batch-select-page>全选本页</button><button type="button" data-batch-select-filter>全选当前筛选</button><button type="button" data-batch-clear disabled>清空</button><button type="button" class="batch-primary" data-batch-open disabled>批量记录处理</button></div></div>';
-    workspace.innerHTML = '<section class="module-banner"><div><p class="eyebrow green">广告监控视图 · ' + esc(info.scope) + '</p><h1>' + esc(info.title) + '</h1><p>' + esc(moduleHeadline) + '</p></div><div class="module-kpi"><strong>' + count + '</strong><span>' + esc(info.kpi) + '</span><small>同步：' + esc(sourceMeta[id] || data.refreshedAt || '待同步') + '</small></div></section><nav class="module-flow" aria-label="广告监控闭环">' + flow + '</nav>' + modulePanelsHtml + kpiHtml + chartHtml + closureProgressHtml() + '<section class="module-panel results-panel"><div class="result-heading"><div><p class="eyebrow">全部真实分析明细</p><h2>已纳入全部 ' + rows.length.toLocaleString() + ' 条结果</h2><p>' + esc(resultNote) + '</p></div><div class="result-actions">' + filterHtml + '<span class="status-pill detail-count">' + (rows.length ? '真实数据 ' + rows.length.toLocaleString() + ' 条' : '等待数据同步') + '</span></div></div>' + batchToolbarHtml + tableHtml + '</section><section class="module-panel output-panel"><div><p class="eyebrow">完整结果文件</p><h2>在本地打开原始结果</h2></div><div class="output-list">' + files + '</div><p class="file-help">本文件放在 <code>06_工作台/dist</code> 目录时，结果文件链接可直接在本地打开。</p></section><section class="closure-drawer" data-closure-drawer hidden aria-live="polite"></section>';
+    const resultNote = id === 'd' ? '仅展示需要新增否词的搜索词明细；可勾选同类记录批量处理，或点击“记录处理”填写执行过程与 7 天复核。' : '字段和记录均来自本模块的最新分析结果文件；可勾选同类记录批量处理，或点击“记录处理”填写单条处理过程与 7 天复核。';
+    const resultTitle = id === 'd' ? '需新增否词明细 · ' + detailRows.length.toLocaleString() + ' 条' : '已纳入全部 ' + rows.length.toLocaleString() + ' 条结果';
+    const batchToolbarHtml = '<div class="batch-toolbar" data-batch-toolbar><div><strong>批量处理</strong><span data-batch-count>已选择 0 条</span><small>' + (id === 'd' ? '仅针对需新增否词的搜索词进行统一处理。' : '先按相同原因或条件筛选，再勾选同类记录统一处理。') + '</small></div><div class="batch-toolbar-actions"><button type="button" data-batch-select-page>全选本页</button><button type="button" data-batch-select-filter>全选当前筛选</button><button type="button" data-batch-clear disabled>清空</button><button type="button" class="batch-primary" data-batch-open disabled>批量记录处理</button></div></div>';
+    workspace.innerHTML = '<section class="module-banner"><div><p class="eyebrow green">广告监控视图 · ' + esc(info.scope) + '</p><h1>' + esc(info.title) + '</h1><p>' + esc(moduleHeadline) + '</p></div><div class="module-kpi"><strong>' + count + '</strong><span>' + esc(info.kpi) + '</span><small>同步：' + esc(sourceMeta[id] || data.refreshedAt || '待同步') + '</small></div></section><nav class="module-flow" aria-label="广告监控闭环">' + flow + '</nav>' + modulePanelsHtml + kpiHtml + chartHtml + closureProgressHtml() + '<section class="module-panel results-panel"><div class="result-heading"><div><p class="eyebrow">' + (id === 'd' ? '待执行否词清单' : '全部真实分析明细') + '</p><h2>' + resultTitle + '</h2><p>' + esc(resultNote) + '</p></div><div class="result-actions">' + filterHtml + '<span class="status-pill detail-count">' + (detailRows.length ? '真实数据 ' + detailRows.length.toLocaleString() + ' 条' : '等待数据同步') + '</span></div></div>' + batchToolbarHtml + tableHtml + '</section><section class="module-panel output-panel"><div><p class="eyebrow">完整结果文件</p><h2>在本地打开原始结果</h2></div><div class="output-list">' + files + '</div><p class="file-help">本文件放在 <code>06_工作台/dist</code> 目录时，结果文件链接可直接在本地打开。</p></section><section class="closure-drawer" data-closure-drawer hidden aria-live="polite"></section>';
     if (id === 'b') { const axis = workspace.querySelector('[data-b-time-axis]'); const asinSelect = workspace.querySelector('[data-b-asin]'); const renderAxis = () => { axis.innerHTML = bTimeAxisHtml(asinSelect.value, rows); }; renderAxis(); asinSelect.addEventListener('change', renderAxis); }
     const drawer = workspace.querySelector('[data-closure-drawer]');
     const batchToolbar = workspace.querySelector('[data-batch-toolbar]');
-    let activeBatchRows = rows;
-    const selectedRows = () => rows.filter(row => selectedClosureKeys.has(closureKey(row)));
+    let activeBatchRows = detailRows;
+    const selectedRows = () => detailRows.filter(row => selectedClosureKeys.has(closureKey(row)));
     const updateBatchToolbar = () => {
       const count = selectedClosureKeys.size;
       batchToolbar.querySelector('[data-batch-count]').textContent = '已选择 ' + count.toLocaleString() + ' 条';
@@ -698,7 +697,7 @@ window.WORKBENCH_SOURCE_META = {"b":"2026-09-11 11:02","h":"2026-09-11 17:10"};
       const pageCount = Math.max(1, Math.ceil(tableRows.length / pageSize));
       const start = (page - 1) * pageSize;
       const currentRows = tableRows.slice(start, start + pageSize);
-      activeBatchRows = id === 'd' ? rows : tableRows;
+      activeBatchRows = tableRows;
       const allSelected = currentRows.length && currentRows.every(row => selectedClosureKeys.has(closureKey(row)));
       const table = '<div class="result-table-wrap"><table class="result-table"><thead><tr><th class="batch-select-col"><input type="checkbox" aria-label="选择本页全部记录" data-batch-select-all ' + (allSelected ? 'checked' : '') + '></th>' + tableColumns.map(column => '<th>' + esc(column[0]) + '</th>').join('') + '</tr></thead><tbody>' + currentRows.map(row => '<tr><td class="batch-select-col"><input type="checkbox" aria-label="选择此记录" data-batch-select="' + esc(closureKey(row)) + '" ' + (selectedClosureKeys.has(closureKey(row)) ? 'checked' : '') + '></td>' + tableColumns.map(column => { if (column[1] === '__closure') { const record = closureRecord(row); return '<td class="closure-cell"><span class="closure-status status-' + esc(record.status) + '">' + esc(statusLabel(record.status)) + '</span><button type="button" data-open-closure data-closure-key="' + esc(closureKey(row)) + '">记录处理</button></td>'; } const value = displayCell(column[1], row[column[1]]); return '<td title="' + esc(value) + '">' + esc(shorter(value)) + '</td>'; }).join('') + '</tr>').join('') + '</tbody></table></div>';
       const controls = '<nav class="table-pagination" aria-label="分析明细分页"><span>第 ' + page + ' / ' + pageCount + ' 页 · 显示第 ' + (tableRows.length ? start + 1 : 0) + '–' + Math.min(start + pageSize, tableRows.length) + ' 条</span><div><button type="button" data-page="first" ' + (page === 1 ? 'disabled' : '') + '>首页</button><button type="button" data-page="prev" ' + (page === 1 ? 'disabled' : '') + '>上一页</button><button type="button" data-page="next" ' + (page === pageCount ? 'disabled' : '') + '>下一页</button><button type="button" data-page="last" ' + (page === pageCount ? 'disabled' : '') + '>末页</button></div></nav>';
@@ -716,17 +715,8 @@ window.WORKBENCH_SOURCE_META = {"b":"2026-09-11 11:02","h":"2026-09-11 17:10"};
         onPageChange(action === 'first' ? 1 : action === 'prev' ? Math.max(1, page - 1) : action === 'next' ? Math.min(pageCount, page + 1) : pageCount);
       }));
     };
-    if (tableColumns.length && rows.length && id === 'd') {
-      const renderNegativeGroup = (group, groupRows) => {
-        let groupPage = 1;
-        const container = workspace.querySelector('[data-detail-group="' + group + '"]');
-        const render = () => renderTablePage(container, groupRows, groupPage, nextPage => { groupPage = nextPage; render(); });
-        render();
-      };
-      renderNegativeGroup('remove', removeNegativeRows);
-      renderNegativeGroup('add', addNegativeRows);
-    } else if (tableColumns.length && rows.length) {
-      let filteredRows = rows;
+    if (tableColumns.length && detailRows.length) {
+      let filteredRows = detailRows;
       let page = 1;
       const renderDetailPage = () => {
         const container = workspace.querySelector('.full-result-table');
@@ -736,7 +726,7 @@ window.WORKBENCH_SOURCE_META = {"b":"2026-09-11 11:02","h":"2026-09-11 17:10"};
       let selectedCategory = '';
       let selectedClosureStatus = '';
       const applyDetailFilters = () => {
-        filteredRows = rows.filter(row =>
+        filteredRows = detailRows.filter(row =>
           (!selectedCategory || String(row[filterConfig?.field] || '').trim() === selectedCategory) &&
           (!selectedClosureStatus || closureRecord(row).status === selectedClosureStatus)
         );
