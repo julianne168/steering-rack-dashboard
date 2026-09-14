@@ -597,7 +597,7 @@ window.WORKBENCH_SOURCE_META = {"b":"2026-09-11 11:02","h":"2026-09-11 17:10"};
     const conclusionTitle = id === 'b' ? 'ASIN 掉量原因' : '监控结论分布';
     const chartHtml = renderCharts(id, workRows);
     const kpiHtml = id === 'a' ? moduleAKpis(rows) : '';
-    const frameworkTitle = id === 'c' ? '哪些活动需要拆分' : '监控判断逻辑';
+    const frameworkTitle = id === 'a' ? '转向器周环比效果预警逻辑' : id === 'c' ? '哪些活动需要拆分' : '监控判断逻辑';
     const logicPanel = '<article class="module-panel"><p class="eyebrow">' + frameworkTitle + '</p><ol class="logic-list">' + logic.map((item,index) => '<li><b>' + (index+1) + '</b><span>' + esc(item) + '</span></li>').join('') + '</ol></article>';
     const modulePanelsHtml = id === 'b' || id === 'h'
       ? '<section class="module-layout b-top-layout">' + logicPanel + '</section>'
