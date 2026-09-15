@@ -554,6 +554,8 @@ window.WORKBENCH_SUBSKILLS = [{"id":"a-a-alert-detail-merge","module":"a","label
     const readOnlyColumns = moduleDisplayColumns.filter(column => !['处理状态','确认状态'].includes(column[1]));
     // 费用一览是调整前的基线追踪页，只读展示；其后的运营模块保留处理与效果追踪。
     const supportsClosure = id !== 'h';
+    // 每个模块的原始明细均可勾选下载；费用一览虽不进入处理闭环，也可导出选中记录。
+    const supportsSelection = true;
     // 闭环记录只保存运营录入的信息；原始分析数据仍完全来自结果文件。
     const tableColumns = supportsClosure ? [...readOnlyColumns, ['处理闭环', '__closure']] : readOnlyColumns;
     const selectedClosureKeys = new Set();
@@ -675,12 +677,13 @@ window.WORKBENCH_SUBSKILLS = [{"id":"a-a-alert-detail-merge","module":"a","label
       : id === 'b'
       ? '<section class="module-layout b-top-layout">' + logicPanel + '</section>'
       : '<section class="module-layout">' + logicPanel + '<article class="module-panel"><p class="eyebrow">' + conclusionTitle + '</p><div class="conclusion-list">' + distributionHtml + '</div></article></section>';
-    const resultNote = id === 'h' ? '作为调整前的费用与利润基线，只读展示单 ASIN 费用、销量、销售额、毛利率与退款金额占比。' : id === 'd' ? '仅展示需要新增否词的搜索词明细；可勾选同类记录批量处理，或点击“记录处理”填写执行过程与 7 天复核。' : '字段和记录均来自本模块的最新分析结果文件；可勾选同类记录批量处理，或点击“记录处理”填写单条处理过程与 7 天复核。';
+    const resultNote = id === 'h' ? '作为调整前的费用与利润基线，只读展示单 ASIN 费用、销量、销售额、毛利率与退款金额占比；可勾选后下载所选明细。' : id === 'd' ? '仅展示需要新增否词的搜索词明细；可勾选同类记录下载、批量处理，或点击“记录处理”填写执行过程与 7 天复核。' : '字段和记录均来自本模块的最新分析结果文件；可勾选同类记录下载、批量处理，或点击“记录处理”填写单条处理过程与 7 天复核。';
     const resultTitle = id === 'd' ? '需新增否词明细 · ' + detailRows.length.toLocaleString() + ' 条' : id === 'h' ? '单 ASIN 费用与效果基线 · ' + detailRows.length.toLocaleString() + ' 条' : '已纳入全部 ' + rows.length.toLocaleString() + ' 条结果';
     const batchNote = id === 'c' ? '完整上传表已生成；勾选需重构的活动后，可直接下载对应的后台上传 Excel。' : id === 'd' ? '仅针对需新增否词的搜索词进行统一处理。' : '先按相同原因或条件筛选，再勾选同类记录统一处理。';
     const codexExportButton = id === 'c' ? '<button type="button" class="batch-primary" data-codex-upload-request disabled>下载所选上传表（Excel）</button>' : '';
     const negativeExportControls = id === 'd' ? '<label class="batch-match-type">匹配方式<select data-negative-match-type><option value="Negative Exact">Negative Exact</option><option value="Negative Phrase">Negative Phrase</option></select></label><button type="button" class="batch-primary" data-negative-bulk-export disabled>下载亚马逊否词批量表</button>' : '';
-    const batchToolbarHtml = supportsClosure ? '<div class="batch-toolbar" data-batch-toolbar><div><strong>批量处理</strong><span data-batch-count>已选择 0 条</span><small>' + batchNote + '</small></div><div class="batch-toolbar-actions"><button type="button" data-batch-select-page>全选本页</button><button type="button" data-batch-select-filter>全选当前筛选</button><button type="button" data-batch-clear disabled>清空</button>' + codexExportButton + negativeExportControls + '<button type="button" class="batch-primary" data-batch-open disabled>批量记录处理</button></div></div>' : '<div data-batch-toolbar hidden><span data-batch-count></span><button data-batch-select-page></button><button data-batch-select-filter></button><button data-batch-clear></button><button data-batch-open></button></div>';
+    const selectedRecordExportButton = '<button type="button" data-selected-record-export disabled>下载已选记录</button>';
+    const batchToolbarHtml = supportsClosure ? '<div class="batch-toolbar" data-batch-toolbar><div><strong>批量处理</strong><span data-batch-count>已选择 0 条</span><small>' + batchNote + '</small></div><div class="batch-toolbar-actions"><button type="button" data-batch-select-page>全选本页</button><button type="button" data-batch-select-filter>全选当前筛选</button><button type="button" data-batch-clear disabled>清空</button>' + selectedRecordExportButton + codexExportButton + negativeExportControls + '<button type="button" class="batch-primary" data-batch-open disabled>批量记录处理</button></div></div>' : '<div class="batch-toolbar" data-batch-toolbar><div><strong>明细下载</strong><span data-batch-count>已选择 0 条</span><small>勾选需要留存或分析的记录后下载。</small></div><div class="batch-toolbar-actions"><button type="button" data-batch-select-page>全选本页</button><button type="button" data-batch-select-filter>全选当前筛选</button><button type="button" data-batch-clear disabled>清空</button>' + selectedRecordExportButton + '</div></div>';
     workspace.innerHTML = '<section class="module-banner"><div><p class="eyebrow green">广告监控视图 · ' + esc(info.scope) + '</p><h1>' + esc(info.title) + '</h1><p>' + esc(moduleHeadline) + '</p></div><div class="module-kpi"><strong>' + count + '</strong><span>' + esc(info.kpi) + '</span><small>同步：' + esc(sourceMeta[id] || data.refreshedAt || '待同步') + '</small></div></section><nav class="module-flow" aria-label="广告监控闭环">' + flow + '</nav>' + modulePanelsHtml + kpiHtml + chartHtml + (supportsClosure ? closureProgressHtml() : '') + '<section class="module-panel results-panel"><div class="result-heading"><div><p class="eyebrow">' + (id === 'd' ? '待执行否词清单' : id === 'h' ? '调整前效果基线' : '全部真实分析明细') + '</p><h2>' + resultTitle + '</h2><p>' + esc(resultNote) + '</p></div><div class="result-actions">' + filterHtml + '<span class="status-pill detail-count">' + (detailRows.length ? '真实数据 ' + detailRows.length.toLocaleString() + ' 条' : '等待数据同步') + '</span></div></div>' + batchToolbarHtml + tableHtml + '</section><section class="module-panel output-panel"><div><p class="eyebrow">完整结果文件</p><h2>在本地打开原始结果</h2></div><div class="output-list">' + files + '</div><p class="file-help">本文件放在 <code>06_工作台/dist</code> 目录时，结果文件链接可直接在本地打开。</p></section><section class="closure-drawer" data-closure-drawer hidden aria-live="polite"></section>';
     const skillCardAnchor = workspace.querySelector('.module-layout') || workspace.querySelector('.module-flow');
     if (skillCardAnchor) skillCardAnchor.insertAdjacentHTML('afterend', skillCallCardHtml(id));
@@ -692,8 +695,11 @@ window.WORKBENCH_SUBSKILLS = [{"id":"a-a-alert-detail-merge","module":"a","label
     const updateBatchToolbar = () => {
       const count = selectedClosureKeys.size;
       batchToolbar.querySelector('[data-batch-count]').textContent = '已选择 ' + count.toLocaleString() + ' 条';
-      batchToolbar.querySelector('[data-batch-open]').disabled = count === 0;
+      const batchOpen = batchToolbar.querySelector('[data-batch-open]');
+      if (batchOpen) batchOpen.disabled = count === 0;
       batchToolbar.querySelector('[data-batch-clear]').disabled = count === 0;
+      const selectedRecordExport = batchToolbar.querySelector('[data-selected-record-export]');
+      if (selectedRecordExport) selectedRecordExport.disabled = count === 0;
       const codexExport = batchToolbar.querySelector('[data-codex-upload-request]');
       if (codexExport) codexExport.disabled = count === 0;
       const negativeExport = batchToolbar.querySelector('[data-negative-bulk-export]');
@@ -787,7 +793,26 @@ window.WORKBENCH_SUBSKILLS = [{"id":"a-a-alert-detail-merge","module":"a","label
         closeClosureDrawer();
       });
     };
-    batchToolbar.querySelector('[data-batch-open]').addEventListener('click', openBatchClosureDrawer);
+    batchToolbar.querySelector('[data-batch-open]')?.addEventListener('click', openBatchClosureDrawer);
+    batchToolbar.querySelector('[data-selected-record-export]').addEventListener('click', () => {
+      const exportRows = selectedRows();
+      if (!exportRows.length) { window.alert('请先勾选需要下载的记录。'); return; }
+      const exportColumns = tableColumns.filter(column => column[1] !== '__closure');
+      const adGroupValue = row => {
+        const groups = moduleDAdGroupMap[String(row['活动ID'] || '').trim() + '|' + String(row.ASIN || '').trim().toUpperCase()] || [];
+        return /L3/.test(String(row['处理动作'] || '')) ? (groups.map(group => group.name).join('、') || '未匹配广告组') : '活动级否定（不填）';
+      };
+      const xmlEscape = value => String(value ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+      const rowsForFile = [exportColumns.map(column => column[0]), ...exportRows.map(row => exportColumns.map(column => column[1] === '__ad_group' ? adGroupValue(row) : row[column[1]] ?? ''))];
+      const excelRows = rowsForFile.map(row => '<Row>' + row.map(value => '<Cell><Data ss:Type="String">' + xmlEscape(value) + '</Data></Cell>').join('') + '</Row>').join('');
+      const excelXml = '<?xml version="1.0" encoding="UTF-8"?><?mso-application progid="Excel.Sheet"?><Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"><Worksheet ss:Name="所选明细"><Table>' + excelRows + '</Table></Worksheet></Workbook>';
+      const stamp = new Date().toISOString().replace(/[-:]/g, '').slice(0, 13);
+      const file = new Blob(['\ufeff' + excelXml], {type:'application/vnd.ms-excel;charset=utf-8'});
+      const url = URL.createObjectURL(file), link = document.createElement('a');
+      link.href = url; link.download = '转向器_' + id.toUpperCase() + '_所选明细_' + stamp + '.xls';
+      document.body.appendChild(link); link.click(); link.remove();
+      window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    });
     batchToolbar.querySelector('[data-codex-upload-request]')?.addEventListener('click', () => {
       const asins = [...new Set(selectedRows().flatMap(row => String(row['ASIN列表'] || '').split(/[；;,，\s]+/).map(value => value.trim().toUpperCase()).filter(value => /^[A-Z0-9]{10}$/.test(value))))];
       if (!asins.length) { window.alert('所选活动暂未提供可识别的 ASIN，无法生成上传表。'); return; }
@@ -840,8 +865,8 @@ window.WORKBENCH_SUBSKILLS = [{"id":"a-a-alert-detail-merge","module":"a","label
       const currentRows = tableRows.slice(start, start + pageSize);
       activeBatchRows = tableRows;
       const allSelected = currentRows.length && currentRows.every(row => selectedClosureKeys.has(closureKey(row)));
-      const selectionHead = supportsClosure ? '<th class="batch-select-col"><input type="checkbox" aria-label="选择本页全部记录" data-batch-select-all ' + (allSelected ? 'checked' : '') + '></th>' : '';
-      const table = '<div class="result-table-wrap"><table class="result-table"><thead><tr>' + selectionHead + tableColumns.map(column => '<th>' + esc(column[0]) + '</th>').join('') + '</tr></thead><tbody>' + currentRows.map(row => '<tr>' + (supportsClosure ? '<td class="batch-select-col"><input type="checkbox" aria-label="选择此记录" data-batch-select="' + esc(closureKey(row)) + '" ' + (selectedClosureKeys.has(closureKey(row)) ? 'checked' : '') + '></td>' : '') + tableColumns.map(column => { if (column[1] === '__closure') { const record = closureRecord(row); return '<td class="closure-cell"><span class="closure-status status-' + esc(record.status) + '">' + esc(statusLabel(record.status)) + '</span><button type="button" data-open-closure data-closure-key="' + esc(closureKey(row)) + '">记录处理</button></td>'; } if (column[1] === '__ad_group') { const groups = moduleDAdGroupMap[String(row['活动ID'] || '').trim() + '|' + String(row.ASIN || '').trim().toUpperCase()] || []; const value = /L3/.test(String(row['处理动作'] || '')) ? (groups.map(group => group.name).join('、') || '未匹配广告组') : '活动级否定（不填）'; return '<td title="' + esc(value) + '">' + esc(shorter(value)) + '</td>'; } const value = displayCell(column[1], row[column[1]]); return '<td title="' + esc(value) + '">' + esc(shorter(value)) + '</td>'; }).join('') + '</tr>').join('') + '</tbody></table></div>';
+      const selectionHead = supportsSelection ? '<th class="batch-select-col"><input type="checkbox" aria-label="选择本页全部记录" data-batch-select-all ' + (allSelected ? 'checked' : '') + '></th>' : '';
+      const table = '<div class="result-table-wrap"><table class="result-table"><thead><tr>' + selectionHead + tableColumns.map(column => '<th>' + esc(column[0]) + '</th>').join('') + '</tr></thead><tbody>' + currentRows.map(row => '<tr>' + (supportsSelection ? '<td class="batch-select-col"><input type="checkbox" aria-label="选择此记录" data-batch-select="' + esc(closureKey(row)) + '" ' + (selectedClosureKeys.has(closureKey(row)) ? 'checked' : '') + '></td>' : '') + tableColumns.map(column => { if (column[1] === '__closure') { const record = closureRecord(row); return '<td class="closure-cell"><span class="closure-status status-' + esc(record.status) + '">' + esc(statusLabel(record.status)) + '</span><button type="button" data-open-closure data-closure-key="' + esc(closureKey(row)) + '">记录处理</button></td>'; } if (column[1] === '__ad_group') { const groups = moduleDAdGroupMap[String(row['活动ID'] || '').trim() + '|' + String(row.ASIN || '').trim().toUpperCase()] || []; const value = /L3/.test(String(row['处理动作'] || '')) ? (groups.map(group => group.name).join('、') || '未匹配广告组') : '活动级否定（不填）'; return '<td title="' + esc(value) + '">' + esc(shorter(value)) + '</td>'; } const value = displayCell(column[1], row[column[1]]); return '<td title="' + esc(value) + '">' + esc(shorter(value)) + '</td>'; }).join('') + '</tr>').join('') + '</tbody></table></div>';
       const controls = '<nav class="table-pagination" aria-label="分析明细分页"><span>第 ' + page + ' / ' + pageCount + ' 页 · 显示第 ' + (tableRows.length ? start + 1 : 0) + '–' + Math.min(start + pageSize, tableRows.length) + ' 条</span><div><button type="button" data-page="first" ' + (page === 1 ? 'disabled' : '') + '>首页</button><button type="button" data-page="prev" ' + (page === 1 ? 'disabled' : '') + '>上一页</button><button type="button" data-page="next" ' + (page === pageCount ? 'disabled' : '') + '>下一页</button><button type="button" data-page="last" ' + (page === pageCount ? 'disabled' : '') + '>末页</button></div></nav>';
       container.innerHTML = table + controls;
       container.querySelectorAll('[data-open-closure]').forEach(button => button.addEventListener('click', () => {
@@ -851,7 +876,7 @@ window.WORKBENCH_SUBSKILLS = [{"id":"a-a-alert-detail-merge","module":"a","label
       container.querySelectorAll('[data-batch-select]').forEach(control => control.addEventListener('change', event => {
         const key = event.currentTarget.dataset.batchSelect; if (event.currentTarget.checked) selectedClosureKeys.add(key); else selectedClosureKeys.delete(key); updateBatchToolbar();
       }));
-      if (supportsClosure) updateBatchToolbar();
+      if (supportsSelection) updateBatchToolbar();
       container.querySelectorAll('[data-page]').forEach(button => button.addEventListener('click', () => {
         const action = button.dataset.page;
         onPageChange(action === 'first' ? 1 : action === 'prev' ? Math.max(1, page - 1) : action === 'next' ? Math.min(pageCount, page + 1) : pageCount);
