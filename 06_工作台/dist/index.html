@@ -808,22 +808,21 @@ window.WORKBENCH_SUBSKILLS = [{"id":"a-a-alert-detail-merge","module":"a","label
       const missingGroups = [];
       selectedRows().forEach(row => {
         const keyword = String(row['待否词'] || '').trim();
-        const campaign = String(row['广告活动'] || '').trim();
         const activityId = String(row['活动ID'] || '').trim();
         const asin = String(row.ASIN || '').trim().toUpperCase();
-        if (!keyword || !campaign) return;
+        if (!keyword || !activityId) return;
         if (/L3/.test(String(row['处理动作'] || ''))) {
           const groups = moduleDAdGroupMap[activityId + '|' + asin] || [];
           if (!groups.length) { missingGroups.push(keyword); return; }
-          groups.forEach(group => exportRows.push(['SP','Ad Group Negative Keyword','Create',campaign,group.name,keyword,matchType,'Enabled']));
+          groups.forEach(group => exportRows.push(['SP','Ad Group Negative Keyword','Create',activityId,group.id,keyword,matchType,'Enabled']));
         } else if (/L2/.test(String(row['处理动作'] || ''))) {
-          exportRows.push(['SP','Campaign Negative Keyword','Create',campaign,'',keyword,matchType,'Enabled']);
+          exportRows.push(['SP','Campaign Negative Keyword','Create',activityId,'',keyword,matchType,'Enabled']);
         }
       });
       const uniqueRows = [...new Map(exportRows.map(row => [row.join('\u0001'), row])).values()];
       if (!uniqueRows.length) { window.alert('所选记录中没有可创建的否词。'); return; }
       const xmlEscape = value => String(value ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-      const headers = ['Product','Entity','Operation','Campaign ID / Name','Ad Group ID / Name','Keyword Text','Match Type','State'];
+      const headers = ['Product','Entity','Operation','Campaign ID','Ad Group ID','Keyword Text','Match Type','State'];
       const excelRows = [headers, ...uniqueRows].map(row => '<Row>' + row.map(value => '<Cell><Data ss:Type="String">' + xmlEscape(value) + '</Data></Cell>').join('') + '</Row>').join('');
       const excelXml = '<?xml version="1.0" encoding="UTF-8"?><?mso-application progid="Excel.Sheet"?><Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"><Worksheet ss:Name="Bulk upload"><Table>' + excelRows + '</Table></Worksheet></Workbook>';
       const stamp = new Date().toISOString().replace(/[-:]/g, '').slice(0, 13);
