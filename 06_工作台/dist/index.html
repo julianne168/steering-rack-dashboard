@@ -210,7 +210,7 @@ window.WORKBENCH_MODULE_SKILLS = {"a":{"name":"本周经营预警检查","purpos
     const downloadUrl = skill.packageUrl || ('data:text/markdown;charset=utf-8,' + encodeURIComponent(skill.markdown));
     const downloadName = skill.fileName || (skill.slug + '-SKILL.md');
     const packageNote = skill.fileCount ? '完整包 · ' + skill.fileCount + ' 个文件 · 含子 Skill 与脚本' : '单文件 Skill';
-    return '<section class="skill-call-card"><div class="skill-call-head"><div><p class="eyebrow">本页面配套 Skill</p><h2>' + esc(skill.name) + '</h2><p>' + esc(skill.purpose) + '</p><small>' + esc(packageNote) + '</small></div><div class="skill-card-actions"><button type="button" class="skill-detail" data-skill-preview="' + esc(id) + '">⌕ 查看详情</button><a class="skill-download" href="' + esc(downloadUrl) + '" download="' + esc(downloadName) + '">↓ 下载完整包 .zip</a></div></div></section>';
+    return '<section class="skill-call-card"><div class="skill-call-head"><div><p class="eyebrow">本页面配套 Skill</p><h2>' + esc(skill.name) + '</h2><p>' + esc(skill.purpose) + '</p><small>' + esc(packageNote) + '</small></div><div class="skill-card-actions"><a class="skill-detail" href="subskills.html?module=' + esc(id) + '">☷ 子 Skill 库</a><button type="button" class="skill-detail" data-skill-preview="' + esc(id) + '">⌕ 查看详情</button><a class="skill-download" href="' + esc(downloadUrl) + '" download="' + esc(downloadName) + '">↓ 下载完整包 .zip</a></div></div></section>';
   };
   const openSkillPreview = id => {
     const skill = packagedSkillConfigs[id] || skillCallConfigs[id];
