@@ -74,7 +74,7 @@ body.module-mode .module-main{margin-right:0;max-width:none}
 @media(min-width:1401px){.left-nav{width:220px}.right-rail{width:300px}.center{margin-left:220px;margin-right:300px}.global-header{margin-left:238px;margin-right:318px}}
 @media(min-width:961px) and (max-width:1400px){.left-nav{width:196px}.right-rail{width:270px}.center{margin-left:196px;margin-right:270px}.global-header{margin-left:214px;margin-right:288px}}
 @media(min-width:701px){body.module-mode .global-header{margin-right:18px}}
-.result-table tbody tr{cursor:default;transition:background .16s ease,box-shadow .16s ease}.result-table tbody tr:hover td{background:linear-gradient(90deg,#edf6ff 0%,#f8fbff 100%);border-top-color:#cfe2f5;color:#173f67}.result-table tbody tr:hover td:first-child{box-shadow:inset 4px 0 0 #2877dc;font-weight:700}.result-table tbody tr:hover td:nth-child(2){color:#1769b5;font-weight:700}.result-table tbody tr:hover{box-shadow:0 4px 14px rgba(42,92,140,.12)}.result-table tbody tr:hover .closure-cell{background:#e8f3ff}</style></head>
+.result-table tbody tr{cursor:default;transition:background .16s ease,box-shadow .16s ease}.result-table tbody tr:hover td{background:linear-gradient(90deg,#edf6ff 0%,#f8fbff 100%);border-top-color:#cfe2f5;color:#173f67}.result-table tbody tr:hover td:first-child{box-shadow:inset 4px 0 0 #2877dc;font-weight:700}.result-table tbody tr:hover td:nth-child(2){color:#1769b5;font-weight:700}.result-table tbody tr:hover{box-shadow:0 4px 14px rgba(42,92,140,.12)}.result-table tbody tr:hover .closure-cell{background:#e8f3ff}.skill-call-card{margin-top:18px;padding:18px 20px;border:1px solid #d6e5f4;border-radius:14px;background:linear-gradient(135deg,#fbfdff 0%,#f3f8ff 100%);box-shadow:0 8px 22px rgba(36,67,90,.035)}.skill-call-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}.skill-call-head h2{margin:4px 0 5px;color:#1d4268;font-size:17px}.skill-call-head p{margin:0;max-width:820px;color:#5e7488;font-size:13px;line-height:1.55}.skill-call-head>span{flex:0 0 auto;border:1px solid #c9def4;border-radius:999px;background:#fff;padding:5px 9px;color:#2877dc;font-size:11px;font-weight:800}.skill-markdown-preview{margin:14px 0 0;overflow:auto;border:1px solid #dbe7f3;border-radius:10px;background:#fff;padding:12px 14px;color:#36556f;font:12px/1.65 ui-monospace,SFMono-Regular,Consolas,"Microsoft YaHei",monospace;white-space:pre-wrap}.skill-markdown-preview code{font:inherit}@media(max-width:650px){.skill-call-card{padding:16px}.skill-call-head{flex-direction:column;gap:8px}.skill-call-head>span{align-self:flex-start}}</style></head>
 <body data-build="single-file">
   <header class="global-header">
     <div class="workbench-name"><span class="blue-dot"></span><strong>转向器驾驶舱</strong><span>王云 · 周度监控</span></div>
@@ -181,6 +181,15 @@ window.WORKBENCH_SOURCE_META = {"b":"2026-09-11 11:02","h":"2026-09-11 17:10"};
     g:{name:'利润护栏监控',title:'盈亏平衡 ACOS',kpi:'可增投 ASIN',key:'investableAsins',scope:'有广告动作的 ASIN · 2026-08 成本',files:[['ASIN 盈亏平衡表','../../04_分析结果/模块G_ASIN盈亏平衡表.csv']]},
     h:{name:'单ASIN费用一览',title:'单ASIN费用一览',kpi:'费用 ASIN',key:'asinCostRows',scope:'转向器 · 2026-08 毛利率与费用占比',files:[['ASIN 毛利率汇总','../../04_分析结果/202608_Amazon_转向器_ASIN毛利率汇总.xlsx']]}
   };
+  const skillCallConfigs = {
+    h:{name:'费用与利润基线分析',purpose:'汇总单 ASIN 的销量、销售额、毛利率与费用占比，形成所有广告调整前可复用的效果基线。',markdown:'# 单 ASIN 费用与效果基线\n- 按 商品编码 + ASIN 汇总费用、销售与毛利。\n- 输出销量、销售额、毛利率、退款金额占比等基线指标。\n- 仅用于调整前对比，不生成代运营动作。'},
+    a:{name:'周环比效果预警',purpose:'比较周度销售、流量和广告效率，识别需要优先核查的 ASIN 经营异常。',markdown:'# 转向器周环比效果预警\n- 对比本周与上周的单量、销售额、曝光、点击与 ACOS。\n- 标记单量/销售额下滑或 TACOS 上升的 ASIN。\n- 输出预警标记与优先核查方向。'},
+    b:{name:'掉量原因归因',purpose:'围绕掉量起点核对库存、购物车、链接、价格和竞对信号，区分直接原因与观察项。',markdown:'# ASIN 掉量原因归因\n- 定位销量首次持续下滑的日期。\n- 对齐库存、购物车、链接、价格、广告与竞对事件。\n- 输出原因分类、核心证据与建议核查动作。'},
+    g:{name:'盈亏平衡 ACOS 分析',purpose:'以毛利和费用为边界，对比当前、目标与盈亏平衡 ACOS，识别可增投和需优化的 ASIN。',markdown:'# 盈亏平衡 ACOS 分析\n- 计算单 ASIN 的当前、目标与盈亏平衡 ACOS。\n- 排除数据不足项，定位可增投及需要优化对象。\n- 输出利润准入结论与测试优先级。'},
+    c:{name:'多 ASIN 活动结构诊断',purpose:'识别活动内 ASIN 适配冲突、重复投放与预算内耗，明确活动保留、合并或拆分方向。',markdown:'# 多 ASIN 活动结构诊断\n- 检查产品线、车型/适配范围和价格带是否混投。\n- 识别重复竞价、ASIN 冲突与错配花费。\n- 输出保留、合并、拆分或暂停建议。'},
+    d:{name:'否词与无效流量校验',purpose:'按广告活动和否定层级筛选不适配搜索词，区分活动级与广告组级新增否词。',markdown:'# 否词与无效流量校验\n- 基于搜索词适配度与消耗表现识别无效流量。\n- 区分 L2 广告活动级否定与 L3 广告组级否定。\n- 输出可批量执行的新增否词清单。'},
+    f:{name:'潜力词增长测试',purpose:'从搜索词表现中识别尚未覆盖的高潜机会词，并匹配到对应广告活动开展测试。',markdown:'# 潜力词增长测试\n- 识别有订单或销售表现、但尚未充分覆盖的搜索词。\n- 按来源广告活动查看词的曝光、点击、订单和花费。\n- 输出建议匹配类型与增长测试方向。'}
+  };
   const home = document.querySelector('#overview');
   const moduleView = document.querySelector('#module-view');
   const workspace = document.querySelector('#module-workspace');
@@ -190,6 +199,11 @@ window.WORKBENCH_SOURCE_META = {"b":"2026-09-11 11:02","h":"2026-09-11 17:10"};
   if (costBaselineNav && firstActionModuleNav) firstActionModuleNav.parentElement.insertBefore(costBaselineNav, firstActionModuleNav);
   const esc = value => String(value ?? '—').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
   const shorter = value => { const text = String(value ?? '—'); return text.length > 46 ? text.slice(0,46) + '…' : text; };
+  const skillCallCardHtml = id => {
+    const skill = skillCallConfigs[id];
+    if (!skill) return '';
+    return '<section class="skill-call-card"><div class="skill-call-head"><div><p class="eyebrow">AI 分析 Skill 调用说明</p><h2>' + esc(skill.name) + '</h2><p>' + esc(skill.purpose) + '</p></div><span>Markdown 预览</span></div><pre class="skill-markdown-preview"><code>' + esc(skill.markdown) + '</code></pre></section>';
+  };
   const costRatioFields = new Set(['毛利率','材料占比','头程占比','尾程占比','推广合计占比','促销折扣占比','退款金额占比','仓储费占比','库内操作费占比','佣金占比','税费占比']);
   const displayCell = (field, value) => {
     if (field === '广告活动名称') return String(value ?? '').split(/\r?\n/).map(item => item.trim()).filter(Boolean).join(', ');
@@ -612,6 +626,8 @@ window.WORKBENCH_SOURCE_META = {"b":"2026-09-11 11:02","h":"2026-09-11 17:10"};
     const resultTitle = id === 'd' ? '需新增否词明细 · ' + detailRows.length.toLocaleString() + ' 条' : id === 'h' ? '单 ASIN 费用与效果基线 · ' + detailRows.length.toLocaleString() + ' 条' : '已纳入全部 ' + rows.length.toLocaleString() + ' 条结果';
     const batchToolbarHtml = supportsClosure ? '<div class="batch-toolbar" data-batch-toolbar><div><strong>批量处理</strong><span data-batch-count>已选择 0 条</span><small>' + (id === 'd' ? '仅针对需新增否词的搜索词进行统一处理。' : '先按相同原因或条件筛选，再勾选同类记录统一处理。') + '</small></div><div class="batch-toolbar-actions"><button type="button" data-batch-select-page>全选本页</button><button type="button" data-batch-select-filter>全选当前筛选</button><button type="button" data-batch-clear disabled>清空</button><button type="button" class="batch-primary" data-batch-open disabled>批量记录处理</button></div></div>' : '<div data-batch-toolbar hidden><span data-batch-count></span><button data-batch-select-page></button><button data-batch-select-filter></button><button data-batch-clear></button><button data-batch-open></button></div>';
     workspace.innerHTML = '<section class="module-banner"><div><p class="eyebrow green">广告监控视图 · ' + esc(info.scope) + '</p><h1>' + esc(info.title) + '</h1><p>' + esc(moduleHeadline) + '</p></div><div class="module-kpi"><strong>' + count + '</strong><span>' + esc(info.kpi) + '</span><small>同步：' + esc(sourceMeta[id] || data.refreshedAt || '待同步') + '</small></div></section><nav class="module-flow" aria-label="广告监控闭环">' + flow + '</nav>' + modulePanelsHtml + kpiHtml + chartHtml + (supportsClosure ? closureProgressHtml() : '') + '<section class="module-panel results-panel"><div class="result-heading"><div><p class="eyebrow">' + (id === 'd' ? '待执行否词清单' : id === 'h' ? '调整前效果基线' : '全部真实分析明细') + '</p><h2>' + resultTitle + '</h2><p>' + esc(resultNote) + '</p></div><div class="result-actions">' + filterHtml + '<span class="status-pill detail-count">' + (detailRows.length ? '真实数据 ' + detailRows.length.toLocaleString() + ' 条' : '等待数据同步') + '</span></div></div>' + batchToolbarHtml + tableHtml + '</section><section class="module-panel output-panel"><div><p class="eyebrow">完整结果文件</p><h2>在本地打开原始结果</h2></div><div class="output-list">' + files + '</div><p class="file-help">本文件放在 <code>06_工作台/dist</code> 目录时，结果文件链接可直接在本地打开。</p></section><section class="closure-drawer" data-closure-drawer hidden aria-live="polite"></section>';
+    const skillCardAnchor = workspace.querySelector('.module-layout') || workspace.querySelector('.module-flow');
+    if (skillCardAnchor) skillCardAnchor.insertAdjacentHTML('afterend', skillCallCardHtml(id));
     if (id === 'b') { const axis = workspace.querySelector('[data-b-time-axis]'); const asinSelect = workspace.querySelector('[data-b-asin]'); const renderAxis = () => { axis.innerHTML = bTimeAxisHtml(asinSelect.value, rows); }; renderAxis(); asinSelect.addEventListener('change', renderAxis); }
     const drawer = workspace.querySelector('[data-closure-drawer]');
     const batchToolbar = workspace.querySelector('[data-batch-toolbar]');
